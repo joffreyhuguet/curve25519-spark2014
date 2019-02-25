@@ -7,8 +7,9 @@ This project was inspired by [[https://www.imperialviolet.org/2014/09/07/provers
 verify some basic functions from a curve25519 implementation available
 [[https://github.com/agl/curve25519-donna][here]].
 
-The SPARK2014 code is a translation from the C code in
-[[https://github.com/agl/curve25519-donna][curve25519-donna]] repository.
+The SPARK2014 code for implementation of functions in
+~src/curve25519.adb~ is a translation and/or adaptation from the C
+code in [[https://github.com/agl/curve25519-donna][curve25519-donna]] repository.
 
 ** Tools used
 
@@ -25,7 +26,15 @@ An axiomatization of this library in Why3 was done to be able to use
 it in proofs. For more information about external axiomatization in
 SPARK, see [[https://blog.adacore.com/external-axiomatizations-a-trip-into-sparks-internals][here]].
 
+All proofs are run on a machine equipped with an Intel Core i7-7700HQ
+CPU and 16 GB of RAM.
+
 ** Content of each directory
 
 - ~src~ directory contains all source files: big integers library, files containing ghost code, curve25519 partial implementation
-- ~proof/_theories~ contains the external axiomatization for ~src/big_integers.mlw~, as specified in project file ~test.gpr~
+- ~proof/_theories~ contains the external axiomatization for ~src/big_integers.ads~, as specified in project file ~test.gpr~
+
+** More about curve25519
+
+Daniel J. Bernstein provides an implementation of curve25519 and links
+to learn more about curve25519 in [[http://cr.yp.to/ecdh.html][http://cr.yp.to/ecdh.html]].
