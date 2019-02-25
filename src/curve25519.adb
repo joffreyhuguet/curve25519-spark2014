@@ -25,45 +25,48 @@
 --  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 --  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 package body Curve25519 with
   SPARK_Mode
 is
 
    function Add (X, Y : Ints_256) return Ints_256 is
       Sum : Ints_256 := (others => 0);
-      X_256, Y_256, Sum_256 : Big_Integer := Zero with Ghost;
+      procedure Prove_Add with
+        Ghost,
+        Pre  => (for all J in Sum'Range => Sum (J) = X (J) + Y (J)),
+        Post => To_Integer_256 (Sum) = To_Integer_256 (X) + To_Integer_256 (Y)
+      is
+        X_256, Y_256, Sum_256 : Big_Integer := Zero;
+      begin
+         for J in Sum'Range loop
+            X_256 := X_256 + To_Big_Integer (X (J)) * Conversion_Array (J);
+            Y_256 := Y_256 + To_Big_Integer (Y (J)) * Conversion_Array (J);
+            Sum_256 := Sum_256 + To_Big_Integer (Sum (J)) * Conversion_Array (J);
+
+            pragma Assert (To_Big_Integer (X (J)) * Conversion_Array (J) +
+                             To_Big_Integer (Y (J)) * Conversion_Array (J) =
+                           (To_Big_Integer (X (J) + Y (J))) * Conversion_Array (J));
+            pragma Assert (X (J) + Y (J) = Sum (J));
+            pragma Assert ((To_Big_Integer (X (J) + Y (J))) * Conversion_Array (J)
+                           = To_Big_Integer (Sum (J)) * Conversion_Array (J));
+
+            pragma Loop_Invariant (X_256 = Partial_Conversion (X, J));
+            pragma Loop_Invariant (Y_256 = Partial_Conversion (Y, J));
+            pragma Loop_Invariant (Sum_256 = Partial_Conversion (Sum, J));
+            pragma Loop_Invariant (Partial_Conversion (Sum, J) =
+                                     Partial_Conversion (X, J) +
+                                     Partial_Conversion (Y, J));
+         end loop;
+      end Prove_Add;
+
    begin
       for J in Sum'Range loop
-
          Sum (J) := X (J) + Y (J);
 
          pragma Loop_Invariant (for all K in 0 .. J =>
                                   Sum (K) = X (K) + Y (K));
-
       end loop;
-
-      for J in Sum'Range loop
-
-         X_256 := X_256 + To_Big_Integer (X (J)) * Conversion_Array (J);
-         Y_256 := Y_256 + To_Big_Integer (Y (J)) * Conversion_Array (J);
-         Sum_256 := Sum_256 + To_Big_Integer (Sum (J)) * Conversion_Array (J);
-
-         pragma Assert (To_Big_Integer (X (J)) * Conversion_Array (J) +
-                          To_Big_Integer (Y (J)) * Conversion_Array (J) =
-                        (To_Big_Integer (X (J) + Y (J))) * Conversion_Array (J));
-         pragma Assert (X (J) + Y (J) = Sum (J));
-         pragma Assert ((To_Big_Integer (X (J) + Y (J))) * Conversion_Array (J)
-                        = To_Big_Integer (Sum (J)) * Conversion_Array (J));
-
-         pragma Loop_Invariant (X_256 = Partial_Conversion (X, J));
-         pragma Loop_Invariant (Y_256 = Partial_Conversion (Y, J));
-         pragma Loop_Invariant (Sum_256 = Partial_Conversion (Sum, J));
-         pragma Loop_Invariant (Partial_Conversion (Sum, J) =
-                                  Partial_Conversion (X, J) +
-                                  Partial_Conversion (Y, J));
-      end loop;
-
+      Prove_Add;
       return Sum;
    end Add;
 

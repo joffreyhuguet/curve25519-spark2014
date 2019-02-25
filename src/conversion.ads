@@ -2,7 +2,8 @@ with Big_Integers; use Big_Integers;
 with Types; use Types;
 
 package Conversion with
-  SPARK_Mode
+  SPARK_Mode,
+  Ghost
 is
    pragma Annotate (GNATprove, Terminating, Conversion);
 
@@ -15,7 +16,7 @@ is
       else
          Partial_Conversion_Rec (X, L - 1) + To_Big_Integer (X (L)) * Conversion_Array (L))
        with
-         Pre  => X'First = 0 and then X'Length > 0 and then L in X'Range;
+         Pre  => X'First = 0 and then L in X'Range;
 
    function Partial_Conversion (X : Ints ; L : Extended_Index_Type) return Big_Integer
    is
