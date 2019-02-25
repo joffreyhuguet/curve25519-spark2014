@@ -27,4 +27,6 @@ is
    function To_Integer_256 (X : Ints_256) return Big_Integer is
      (Partial_Conversion (X, 9));
 
+   function To_Integer_Mult (X : Ints_Mult) return Big_Integer is
+     (Partial_Conversion (X, 18));
 end Conversion;

@@ -70,4 +70,144 @@ is
       return Sum;
    end Add;
 
+--  Multiply has 3 different implementations as for now. Every implementation
+--  will be kept until the function is proved for one of these.
+   function Multiply (X, Y : Ints_256) return Ints_Mult is
+      Mult : Ints_Mult := (others => 0);
+   begin
+
+--  Implementation based on curve25519-donna implementation
+
+--              Mult (0)  :=      X (0) * Y (0);
+--              Mult (1)  :=      X (0) * Y (1) +
+--                                X (1) * Y (0);
+--              Mult (2)  := 2 *  X (1) * Y (1) +
+--                                X (0) * Y (2) +
+--                                X (2) * Y (0);
+--              Mult (3)  :=      X (1) * Y (2) +
+--                                X (2) * Y (1) +
+--                                X (0) * Y (3) +
+--                                X (3) * Y (0);
+--              Mult (4)  :=      X (2) * Y (2) +
+--                           2 * (X (1) * Y (3) +
+--                                X (3) * Y (1)) +
+--                                X (0) * Y (4) +
+--                                X (4) * Y (0);
+--              Mult (5)  :=      X (2) * Y (3) +
+--                                X (3) * Y (2) +
+--                                X (1) * Y (4) +
+--                                X (4) * Y (1) +
+--                                X (0) * Y (5) +
+--                                X (5) * Y (0);
+--              Mult (6)  := 2 * (X (3) * Y (3) +
+--                                X (1) * Y (5) +
+--                                X (5) * Y (1)) +
+--                                X (2) * Y (4) +
+--                                X (4) * Y (2) +
+--                                X (0) * Y (6) +
+--                                X (6) * Y (0);
+--              Mult (7)  :=      X (3) * Y (4) +
+--                                X (4) * Y (3) +
+--                                X (2) * Y (5) +
+--                                X (5) * Y (2) +
+--                                X (1) * Y (6) +
+--                                X (6) * Y (1) +
+--                                X (0) * Y (7) +
+--                                X (7) * Y (0);
+--              Mult (8)  :=      X (4) * Y (4) +
+--                           2 * (X (3) * Y (5) +
+--                                X (5) * Y (3) +
+--                                X (1) * Y (7) +
+--                                X (7) * Y (1)) +
+--                                X (2) * Y (6) +
+--                                X (6) * Y (2) +
+--                                X (0) * Y (8) +
+--                                X (8) * Y (0);
+--              Mult (9)  :=      X (4) * Y (5) +
+--                                X (5) * Y (4) +
+--                                X (3) * Y (6) +
+--                                X (6) * Y (3) +
+--                                X (2) * Y (7) +
+--                                X (7) * Y (2) +
+--                                X (1) * Y (8) +
+--                                X (8) * Y (1) +
+--                                X (0) * Y (9) +
+--                                X (9) * Y (0);
+--              Mult (10) := 2 * (X (5) * Y (5) +
+--                                X (3) * Y (7) +
+--                                X (7) * Y (3) +
+--                                X (1) * Y (9) +
+--                                X (9) * Y (1)) +
+--                                X (4) * Y (6) +
+--                                X (6) * Y (4) +
+--                                X (2) * Y (8) +
+--                                X (8) * Y (2);
+--              Mult (11) :=      X (5) * Y (6) +
+--                                X (6) * Y (5) +
+--                                X (4) * Y (7) +
+--                                X (7) * Y (4) +
+--                                X (3) * Y (8) +
+--                                X (8) * Y (3) +
+--                                X (2) * Y (9) +
+--                                X (9) * Y (2);
+--              Mult (12) :=      X (6) * Y (6) +
+--                           2 * (X (5) * Y (7) +
+--                                X (7) * Y (5) +
+--                                X (3) * Y (9) +
+--                                X (9) * Y (3)) +
+--                                X (4) * Y (8) +
+--                                X (8) * Y (4);
+--              Mult (13) :=      X (6) * Y (7) +
+--                                X (7) * Y (6) +
+--                                X (5) * Y (8) +
+--                                X (8) * Y (5) +
+--                                X (4) * Y (9) +
+--                                X (9) * Y (4);
+--              Mult (14) := 2 * (X (7) * Y (7) +
+--                                X (5) * Y (9) +
+--                                X (9) * Y (7)) +
+--                                X (6) * Y (8) +
+--                                X (8) * Y (6);
+--              Mult (15) :=      X (7) * Y (8) +
+--                                X (8) * Y (7) +
+--                                X (6) * Y (9) +
+--                                X (9) * Y (6);
+--              Mult (16) :=      X (8) * Y (8) +
+--                           2 * (X (7) * Y (9) +
+--                                X (9) * Y (7));
+--              Mult (17) :=      X (8) * Y (9) +
+--                                X (9) * Y (8);
+--              Mult (18) := 2 *  X (9) * Y (9);
+
+--  Implementation 2
+
+      for J in Extended_Index_Type range 0 .. 18 loop
+         for K in Extended_Index_Type range 0 .. 9 loop
+
+            if J - K in 0 .. 9 then
+              Mult (J) := Mult (J) + (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K);
+
+            end if;
+
+            pragma Loop_Invariant (True);
+            pragma Loop_Invariant (Mult (J) <= 2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
+            pragma Loop_Invariant (Mult (J) >= (-2) * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
+         end loop;
+
+         pragma Loop_Invariant (True);
+      end loop;
+
+--  Implementation 3
+
+--        for J in Extended_Index_Type range 0 .. 9 loop
+--           for K in Extended_Index_Type range 0 .. 9 loop
+--              Mult (J + K) := Mult (J + K) + X (J) * Y (K) * (if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1);
+--
+--              pragma Loop_Invariant (True);
+--           end loop;
+--           pragma Loop_Invariant (True);
+--        end loop;
+
+      return Mult;
+   end Multiply;
 end Curve25519;
