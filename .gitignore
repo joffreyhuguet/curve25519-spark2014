@@ -1,0 +1,11 @@
+gnatprove
+proof/sessions
+*.ali
+*.o
+*.stderr
+*.stdout
+*~
+*.xml
+*.db
+saved_runs
+runs.yaml

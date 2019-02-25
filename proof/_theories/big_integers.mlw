@@ -1,0 +1,479 @@
+(* Module for axiomatizing the record theory associated to type "big_integer" defined at big_integers.ads:7, created in Why.Gen.Records.Create_Rep_Record_Theory_If_Needed *)
+module Big_integers__big_integer__rep
+ use import "_gnatprove_standard".Main
+ use import "int".Int
+
+ type __main_type = int
+ 
+ function __main_eq 
+   (a : __main_type) (b : __main_type) : bool = a = b
+ 
+ type __rep = int
+ 
+ function to_base 
+   (a : __rep) : __rep =
+  a
+ 
+ function of_base 
+   (a : __rep) : __rep =
+  a
+ 
+ function bool_eq 
+   (a : __rep) (b : __rep) : bool = a = b
+
+end
+
+(* Module for axiomatizing type "big_integer" defined at big_integers.ads:7, created in Gnat2Why.Types.Translate_Type *)
+module Big_integers__big_integer
+ use export Big_integers__big_integer__rep
+ use import "_gnatprove_standard".Main
+ use import "int".Int
+
+ type big_integer =
+  __rep
+ 
+ function value__size 
+   : int
+ 
+ function object__size 
+   : int
+ 
+ function alignment 
+   : int
+ 
+ axiom value__size_axiom :
+  ((value__size ) >= 0)
+ 
+ axiom object__size_axiom :
+  ((object__size ) >= 0)
+ 
+ axiom alignment_axiom :
+  ((alignment ) >= 0)
+ 
+ function user_eq 
+   (a : big_integer) (b : big_integer) : bool
+ 
+ function dummy 
+   : big_integer
+ 
+ type big_integer__ref =
+  { mutable big_integer__content : big_integer }
+ 
+ function big_integer__ref_big_integer__content__projection 
+   (a : big_integer__ref) : big_integer =
+  a.big_integer__content
+ 
+ meta "model_projection" function big_integer__ref_big_integer__content__projection
+ 
+ meta "inline : no" function big_integer__ref_big_integer__content__projection
+ 
+ val big_integer__havoc 
+   (x : big_integer__ref) : unit
+  writes {x}
+
+ predicate dynamic_invariant "inline" 
+   (temp___expr_158 : big_integer) (temp___is_init_154 : bool) (temp___skip_constant_155 : bool) (temp___do_toplevel_156 : bool) (temp___do_typ_inv_157 : bool)  =
+  true
+ 
+ predicate default_initial_assumption "inline" 
+   (temp___expr_159 : big_integer) (temp___skip_top_level_160 : bool)  =
+  true
+
+end
+
+
+(* Module for defining the constant "zero" defined at big_integers.ads:9, created in Gnat2Why.Decls.Translate_Constant *)
+module Big_integers__zero
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function zero #"big_integers.ads" 9 0 0#
+   : Big_integers__big_integer.big_integer = 0
+ 
+ function attr__ATTRIBUTE_ADDRESS 
+   : int
+
+end
+
+(* Module for possibly declaring a logic function for "Oeq" defined at big_integers.ads:11, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Oeq
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function oeq__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l = r
+ 
+ predicate oeq__function_guard 
+   (result : bool) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) = true
+
+ val oeq 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool
+  requires {  true }
+  ensures {  ( ( (result = (oeq__logic l r)) /\ (oeq__function_guard result l r) )/\true ) }
+
+end
+
+(* Module for possibly declaring a logic function for "Olt" defined at big_integers.ads:12, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Olt
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function olt__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l < r
+ 
+ predicate olt__function_guard 
+   (result : bool) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) = true
+
+ val olt 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool
+  requires {  true }
+  ensures {  ( ( (result = (olt__logic l r)) /\ (olt__function_guard result l r) )/\true ) }
+
+end
+
+(* Module for possibly declaring a logic function for "Ole" defined at big_integers.ads:13, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Ole
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function ole__logic
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l <= r
+ 
+ predicate ole__function_guard 
+   (result : bool) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) = true
+
+ val ole 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool
+  requires {  true }
+  ensures {  ( ( (result = (ole__logic l r)) /\ (ole__function_guard result l r) )/\true ) }
+
+end
+
+(* Module for possibly declaring a logic function for "Ogt" defined at big_integers.ads:14, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Ogt
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function ogt__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l > r
+ 
+ predicate ogt__function_guard 
+   (result : bool) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) = true
+
+ val ogt 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool
+  requires {  true }
+  ensures {  ( ( (result = (ogt__logic l r)) /\ (ogt__function_guard result l r) )/\true ) }
+  
+end
+
+(* Module for possibly declaring a logic function for "Oge" defined at big_integers.ads:15, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Oge
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function oge__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l >= r
+ 
+ predicate oge__function_guard 
+   (result : bool) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) = true
+
+ val oge 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool
+  requires {  true }
+  ensures {  ( ( (result = (oge__logic l r)) /\ (oge__function_guard result l r) )/\true ) }
+
+end
+
+(* Module for possibly declaring a logic function for "to_big_integer" defined at big_integers.ads:17, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__to_big_integer
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+
+ function to_big_integer__logic
+   (arg : int) : Big_integers__big_integer.big_integer = arg
+ 
+ predicate to_big_integer__function_guard 
+   (result : Big_integers__big_integer.big_integer) (arg : int) = true
+
+ val to_big_integer 
+   (arg : int) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (to_big_integer__logic arg)) /\ (to_big_integer__function_guard result arg) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+  
+end
+
+module Big_integers__to_big_integer__2
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+
+ function to_big_integer__2__logic 
+   (arg : int) : Big_integers__big_integer.big_integer = arg
+ 
+ predicate to_big_integer__2__function_guard 
+   (result : Big_integers__big_integer.big_integer) (arg : int) 
+
+ val to_big_integer__2 
+   (arg : int) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (to_big_integer__2__logic arg)) /\ (to_big_integer__2__function_guard result arg) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+ 
+end
+
+(* Module for possibly declaring a logic function for "in_range" defined at big_integers.ads:25, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__in_range
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+ 
+ function in_range__logic
+   (arg : Big_integers__big_integer.big_integer) (low : Big_integers__big_integer.big_integer) (high : Big_integers__big_integer.big_integer) : bool = low <= arg /\ arg <= high
+ 
+ predicate in_range__function_guard 
+   (result : bool) (arg : Big_integers__big_integer.big_integer) (low : Big_integers__big_integer.big_integer) (high : Big_integers__big_integer.big_integer) = true
+
+ val in_range 
+   (arg : Big_integers__big_integer.big_integer) (low : Big_integers__big_integer.big_integer) (high : Big_integers__big_integer.big_integer) : bool
+  requires {  true }
+(*  ensures {  ( ( (result = (in_range__logic arg low high)) /\ (in_range__function_guard result arg low high) )/\( (result = True) <-> ( ((epsilon temp___result_178 : bool.
+   ( (temp___result_178 = (Big_integers__Ole.ole low arg)) /\ (Big_integers__Ole.ole__function_guard temp___result_178 low arg) )) = True) /\ ((epsilon temp___result_179 : bool.
+   ( (temp___result_179 = (Big_integers__Ole.ole arg high)) /\ (Big_integers__Ole.ole__function_guard temp___result_179 arg high) )) = True) ) ) ) } *)
+   ensures { result = (in_range__logic arg low high) /\ (in_range__function_guard result arg low high) }
+end
+
+(* Module for possibly declaring a logic function for "to_integer" defined at big_integers.ads:28, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__to_integer
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import Big_integers__to_big_integer
+ use import Big_integers__in_range
+ use import "int".Int
+
+ function to_integer__logic 
+   (arg : Big_integers__big_integer.big_integer) : int = arg
+ 
+ predicate to_integer__function_guard 
+   (result : int) (arg : Big_integers__big_integer.big_integer) = true
+
+ val to_integer 
+   (arg : Big_integers__big_integer.big_integer) : int
+   requires { in_range__logic arg (to_big_integer__logic (-2147483648)) (to_big_integer__logic 2147483647)}
+  ensures {  ( ( (result = (to_integer__logic arg)) /\ (to_integer__function_guard result arg) ) ) }
+
+end
+
+(* Module for possibly declaring a logic function for "Osubtract" defined at big_integers.ads:39, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Osubtract
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function osubtract__logic 
+   (l : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = -l
+ 
+ predicate osubtract__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) 
+
+ val osubtract 
+   (l : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (osubtract__logic l)) /\ (osubtract__function_guard result l) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+ 
+end
+
+(* Module for possibly declaring a logic function for "Oabs" defined at big_integers.ads:40, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Oabs
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Abs
+ 
+ function oabs__logic 
+   (l : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = abs l
+ 
+ predicate oabs__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer)
+
+ val oabs 
+   (l : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (oabs__logic l)) /\ (oabs__function_guard result l) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+
+end
+
+(* Module for possibly declaring a logic function for "Oadd" defined at big_integers.ads:11, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Oadd__2
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function oadd__2__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = l + r
+ 
+ predicate oadd__2__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) = true
+
+ val oadd__2 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (oadd__2__logic l r)) /\ (oadd__2__function_guard result l r) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+
+end
+
+(* Module for possibly declaring a logic function for "Osubtract__2" defined at big_integers.ads:42, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Osubtract__2
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function osubtract__2__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = l - r
+ 
+ predicate osubtract__2__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer)
+
+ val osubtract__2 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (osubtract__2__logic l r)) /\ (osubtract__2__function_guard result l r) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+
+end
+
+(* Module for possibly declaring a logic function for "Omultiply" defined at big_integers.ads:43, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Omultiply
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+
+ function omultiply__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = l * r
+ 
+ predicate omultiply__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) 
+
+ val omultiply 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (omultiply__logic l r)) /\ (omultiply__function_guard result l r) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+  
+end
+
+(* Module for possibly declaring a logic function for "Odivide" defined at big_integers.ads:44, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Odivide
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".EuclideanDivision
+
+ function odivide__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = div l r
+ 
+ predicate odivide__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer)
+
+ val odivide 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires { r <> 0 }
+  ensures {  ( ( (result = (odivide__logic l r)) /\ (odivide__function_guard result l r) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+
+end
+
+(* Module for possibly declaring a logic function for "Omod" defined at big_integers.ads:45, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Omod
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".EuclideanDivision
+
+ function omod__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = mod l r
+ 
+ predicate omod__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer)
+
+ val omod 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires { r <> 0 }
+  ensures {  ( ( (result = (omod__logic l r)) /\ (omod__function_guard result l r) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+
+end
+
+(* Module for possibly declaring a logic function for "Orem" defined at big_integers.ads:46, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Orem
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Int
+ use import "int".EuclideanDivision
+
+ function orem__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = l - (div l r) * r
+ 
+ predicate orem__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) 
+
+ val orem 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires { r <> 0 }
+  ensures {  ( ( (result = (orem__logic l r)) /\ (orem__function_guard result l r) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+  
+end
+
+(* Module for possibly declaring a logic function for "Oexpon" defined at big_integers.ads:47, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__Oexpon
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".Power
+
+ function oexpon__logic 
+   (l : Big_integers__big_integer.big_integer) (r : int) : Big_integers__big_integer.big_integer = power l r
+ 
+ predicate oexpon__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : int) 
+
+ val oexpon 
+   (l : Big_integers__big_integer.big_integer) (r : int) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (oexpon__logic l r)) /\ (oexpon__function_guard result l r) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+  
+end
+
+(* Module for possibly declaring a logic function for "min" defined at big_integers.ads:49, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__min
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".MinMax
+
+ function min__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = min l r
+ 
+ predicate min__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer)
+
+ val min 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (min__logic l r)) /\ (min__function_guard result l r) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+
+end
+
+(* Module for possibly declaring a logic function for "max" defined at big_integers.ads:50, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
+module Big_integers__max
+ use import "_gnatprove_standard".Main
+ use        Big_integers__big_integer
+ use import "int".MinMax
+
+ function max__logic 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = max l r
+ 
+ predicate max__function_guard 
+   (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer)
+
+ val max 
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer
+  requires {  true }
+  ensures {  ( ( (result = (max__logic l r)) /\ (max__function_guard result l r) )/\(Big_integers__big_integer.dynamic_invariant result True False True True) ) }
+
+end
