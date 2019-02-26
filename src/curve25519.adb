@@ -74,6 +74,7 @@ is
 --  will be kept until the function is proved for one of these.
    function Multiply (X, Y : Ints_256) return Ints_Mult is
       Mult : Ints_Mult := (others => 0);
+      Sum : Long_Long_Integer;
    begin
 
 --  Implementation based on curve25519-donna implementation
@@ -165,7 +166,7 @@ is
 --                                X (9) * Y (4);
 --              Mult (14) := 2 * (X (7) * Y (7) +
 --                                X (5) * Y (9) +
---                                X (9) * Y (7)) +
+--                                X (9) * Y (5)) +
 --                                X (6) * Y (8) +
 --                                X (8) * Y (6);
 --              Mult (15) :=      X (7) * Y (8) +
@@ -185,15 +186,17 @@ is
          for K in Extended_Index_Type range 0 .. 9 loop
 
             if J - K in 0 .. 9 then
-              Mult (J) := Mult (J) + (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K);
+
+              pragma Assert (X (K) in - (2**27 - 1) .. 2**27 - 1
+                             and then Y (J - K) in - (2**27 - 1) .. 2**27 - 1);
+              Sum := (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K);
+              pragma Assert (Sum in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
+              Mult (J) := Mult (J) + Sum;
 
             end if;
 
-            pragma Loop_Invariant (True);
-            pragma Loop_Invariant (Mult (J) <= 2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
-            pragma Loop_Invariant (Mult (J) >= (-2) * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
+            pragma Loop_Invariant (Mult (J) in  (-2) * Long_Long_Integer (K + 1) * (2**27 - 1)**2 .. 2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
          end loop;
-
          pragma Loop_Invariant (True);
       end loop;
 
