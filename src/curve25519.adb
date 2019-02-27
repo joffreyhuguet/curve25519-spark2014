@@ -25,6 +25,8 @@
 --  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 --  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+with Partial_Product_Impl_2; use Partial_Product_Impl_2;
+
 package body Curve25519 with
   SPARK_Mode
 is
@@ -39,6 +41,7 @@ is
         X_256, Y_256, Sum_256 : Big_Integer := Zero;
       begin
          for J in Sum'Range loop
+
             X_256 := X_256 + To_Big_Integer (X (J)) * Conversion_Array (J);
             Y_256 := Y_256 + To_Big_Integer (Y (J)) * Conversion_Array (J);
             Sum_256 := Sum_256 + To_Big_Integer (Sum (J)) * Conversion_Array (J);
@@ -187,18 +190,45 @@ is
          K_First := Extended_Index_Type'Max (J - 9, 0);
          K_Last := Extended_Index_Type'Min (J, 9);
          for K in K_First .. K_Last loop
+
+            --  The following assertion should not be necessary because it is
+            --  the definition of Partial_Product_Rec, but the provers cannot
+            --  manage to prove it.
+
+            pragma Assert (Partial_Product_Rec (X, Y, J, K) =
+                           (if K = Extended_Index_Type'Max(J - 9, 0)
+                              then (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K)
+                           else
+                                 Partial_Product_Rec (X, Y, J, K - 1) +
+                              (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K)));
+
             pragma Assert (X (K) in - (2**27 - 1) .. 2**27 - 1
                            and then Y (J - K) in - (2**27 - 1) .. 2**27 - 1);
             Aux := (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K);
             pragma Assert (Aux in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
+
+            if K = K_First then
+               pragma Assert (Product (J) = 0);
+            else
+               pragma Assert (Product (J) = Partial_Product (X, Y, J, K - 1));
+            end if;
+
             Product (J) := Product (J) + Aux;
+
+            if K = K_First then
+               pragma Assert (Product (J) = (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K));
+            else
+               pragma Assert (Product (J) = Partial_Product (X, Y, J, K - 1) +
+                              (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K));
+            end if;
 
             pragma Loop_Invariant (Product (J) in
                                      (-2) * Long_Long_Integer (K + 1) * (2**27 - 1)**2
                                      ..
                                      2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
+            pragma Loop_Invariant (Product (J) = Partial_Product (X, Y, J, K));
          end loop;
-         pragma Loop_Invariant (True);
+         pragma Loop_Invariant (for all K in 0 .. J => Product (K) = Partial_Product (X, Y, K));
       end loop;
 
 --  Implementation 3
