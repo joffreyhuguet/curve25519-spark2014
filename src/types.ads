@@ -4,6 +4,11 @@ package Types with
   SPARK_Mode
 is
 
+   Min_Add : constant Long_Long_Integer := -2**30 + 1 with Ghost;
+   Max_Add : constant Long_Long_Integer := 2**30 - 1 with Ghost;
+   Min_Multiply : constant Long_Long_Integer := - (2**27 - 1) with Ghost;
+   Max_Multiply : constant Long_Long_Integer := 2**27 - 1 with Ghost;
+
    type Extended_Index_Type is new Integer range - 1 .. 18;
    subtype Index_Type_Mult is Extended_Index_Type range 0 .. 18;
    subtype Index_Type is Extended_Index_Type range 0 .. 9;
