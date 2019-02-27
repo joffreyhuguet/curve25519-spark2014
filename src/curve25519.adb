@@ -202,11 +202,18 @@ is
 
 --        for J in Extended_Index_Type range 0 .. 9 loop
 --           for K in Extended_Index_Type range 0 .. 9 loop
---              Product (J + K) := Product (J + K) + X (J) * Y (K) * (if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1);
 --
---              pragma Loop_Invariant (True);
+--              pragma Assert (X (J) in - (2**27 - 1) .. 2**27 - 1
+--                             and then Y (K) in - (2**27 - 1) .. 2**27 - 1);
+--              Aux := (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K);
+--              pragma Assert (Aux in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
+--              Product (J + K) := Product (J + K) + Aux;
+--
+--              pragma Loop_Invariant (for all L in J .. J + K => Product (L) in (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2 .. 2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
+--              pragma Loop_Invariant (for all L in 0 .. J - 1 => Product (L) = Product'Loop_Entry (L));
+--              pragma Loop_Invariant (for all L in J + K + 1 .. 18 => Product (L) = Product'Loop_Entry (L));
 --           end loop;
---           pragma Loop_Invariant (True);
+--           pragma Loop_Invariant (for all L in Extended_Index_Type range 0 .. 18 => Product (L) in (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2 .. 2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
 --        end loop;
 
       return Product;
