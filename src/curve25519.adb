@@ -193,7 +193,10 @@ is
             pragma Assert (Aux in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
             Product (J) := Product (J) + Aux;
 
-            pragma Loop_Invariant (Product (J) in (-2) * Long_Long_Integer (K + 1) * (2**27 - 1)**2 .. 2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
+            pragma Loop_Invariant (Product (J) in
+                                     (-2) * Long_Long_Integer (K + 1) * (2**27 - 1)**2
+                                     ..
+                                     2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
          end loop;
          pragma Loop_Invariant (True);
       end loop;
@@ -209,11 +212,21 @@ is
 --              pragma Assert (Aux in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
 --              Product (J + K) := Product (J + K) + Aux;
 --
---              pragma Loop_Invariant (for all L in J .. J + K => Product (L) in (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2 .. 2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
---              pragma Loop_Invariant (for all L in 0 .. J - 1 => Product (L) = Product'Loop_Entry (L));
---              pragma Loop_Invariant (for all L in J + K + 1 .. 18 => Product (L) = Product'Loop_Entry (L));
+--              pragma Loop_Invariant (for all L in J .. J + K =>
+--                                       Product (L) in
+--                                       (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
+--                                     ..
+--                                       2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
+--              pragma Loop_Invariant (for all L in 0 .. J - 1 =>
+--                                       Product (L) = Product'Loop_Entry (L));
+--              pragma Loop_Invariant (for all L in J + K + 1 .. 18 =>
+--                                       Product (L) = Product'Loop_Entry (L));
 --           end loop;
---           pragma Loop_Invariant (for all L in Extended_Index_Type range 0 .. 18 => Product (L) in (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2 .. 2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
+--           pragma Loop_Invariant (for all L in Extended_Index_Type range 0 .. 18 =>
+--                                    Product (L) in
+--                                    (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
+--                                  ..
+--                                    2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
 --        end loop;
 
       return Product;
