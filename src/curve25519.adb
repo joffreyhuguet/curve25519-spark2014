@@ -75,6 +75,7 @@ is
    function Multiply (X, Y : Ints_256) return Ints_Mult is
       Product : Ints_Mult := (others => 0);
       Aux : Long_Long_Integer;
+      K_First, K_Last : Extended_Index_Type;
    begin
 
 --  Implementation based on curve25519-donna implementation
@@ -183,15 +184,14 @@ is
 --  Implementation 2
 
       for J in Extended_Index_Type range 0 .. 18 loop
-         for K in Extended_Index_Type range 0 .. 9 loop
-
-            if J - K in 0 .. 9 then
-              pragma Assert (X (K) in - (2**27 - 1) .. 2**27 - 1
-                             and then Y (J - K) in - (2**27 - 1) .. 2**27 - 1);
-              Aux := (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K);
-              pragma Assert (Aux in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
-              Product (J) := Product (J) + Aux;
-            end if;
+         K_First := Extended_Index_Type'Max (J - 9, 0);
+         K_Last := Extended_Index_Type'Min (J, 9);
+         for K in K_First .. K_Last loop
+            pragma Assert (X (K) in - (2**27 - 1) .. 2**27 - 1
+                           and then Y (J - K) in - (2**27 - 1) .. 2**27 - 1);
+            Aux := (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K);
+            pragma Assert (Aux in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
+            Product (J) := Product (J) + Aux;
 
             pragma Loop_Invariant (Product (J) in (-2) * Long_Long_Integer (K + 1) * (2**27 - 1)**2 .. 2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
          end loop;
