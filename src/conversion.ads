@@ -9,7 +9,7 @@ is
 
    function Partial_Conversion_Rec
      (X    : Ints;
-      L    : Extended_Index_Type)
+      L    : Index_Type_Mult)
       return Big_Integer
    is
      (if L = 0 then To_Big_Integer (X(0)) * Conversion_Array (0)
@@ -18,9 +18,9 @@ is
        with
          Pre  => X'First = 0 and then L in X'Range;
 
-   function Partial_Conversion (X : Ints ; L : Extended_Index_Type) return Big_Integer
+   function Partial_Conversion (X : Ints ; L : Index_Type_Mult) return Big_Integer
    is
-     (if L = -1 then Zero else Partial_Conversion_Rec (X, L))
+     (Partial_Conversion_Rec (X, L))
        with
          Pre  => X'First = 0 and then L in X'Range;
 
