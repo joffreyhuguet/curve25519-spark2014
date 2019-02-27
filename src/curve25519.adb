@@ -75,13 +75,12 @@ is
 
 --  Multiply has 3 different implementations as for now. Every implementation
 --  will be kept until the function is proved for one of these.
-   function Multiply (X, Y : Ints_256) return Ints_Mult is
-      Product : Ints_Mult := (others => 0);
-      Aux : Long_Long_Integer;
-      K_First, K_Last : Extended_Index_Type;
-   begin
 
 --  Implementation based on curve25519-donna implementation
+
+   function Multiply_1 (X, Y : Ints_256) return Ints_Mult is
+      Product : Ints_Mult := (others => 0);
+   begin
 
 --              Product (0)  :=      X (0) * Y (0);
 --              Product (1)  :=      X (0) * Y (1) +
@@ -184,8 +183,17 @@ is
 --                                   X (9) * Y (8);
 --              Product (18) := 2 *  X (9) * Y (9);
 
+      return Product;
+
+   end Multiply_1;
+
 --  Implementation 2
 
+   function Multiply_2 (X, Y : Ints_256) return Ints_Mult is
+      Product : Ints_Mult := (others => 0);
+      Aux : Long_Long_Integer;
+      K_First, K_Last : Extended_Index_Type;
+   begin
       for J in Extended_Index_Type range 0 .. 18 loop
          K_First := Extended_Index_Type'Max (J - 9, 0);
          K_Last := Extended_Index_Type'Min (J, 9);
@@ -230,35 +238,40 @@ is
          end loop;
          pragma Loop_Invariant (for all K in 0 .. J => Product (K) = Partial_Product (X, Y, K));
       end loop;
+      return Product;
+   end Multiply_2;
 
 --  Implementation 3
 
---        for J in Extended_Index_Type range 0 .. 9 loop
---           for K in Extended_Index_Type range 0 .. 9 loop
---
---              pragma Assert (X (J) in - (2**27 - 1) .. 2**27 - 1
---                             and then Y (K) in - (2**27 - 1) .. 2**27 - 1);
---              Aux := (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K);
---              pragma Assert (Aux in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
---              Product (J + K) := Product (J + K) + Aux;
---
---              pragma Loop_Invariant (for all L in J .. J + K =>
---                                       Product (L) in
---                                       (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
---                                     ..
---                                       2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
---              pragma Loop_Invariant (for all L in 0 .. J - 1 =>
---                                       Product (L) = Product'Loop_Entry (L));
---              pragma Loop_Invariant (for all L in J + K + 1 .. 18 =>
---                                       Product (L) = Product'Loop_Entry (L));
---           end loop;
---           pragma Loop_Invariant (for all L in Extended_Index_Type range 0 .. 18 =>
---                                    Product (L) in
---                                    (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
---                                  ..
---                                    2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
---        end loop;
+   function Multiply_3 (X, Y : Ints_256) return Ints_Mult is
+      Product : Ints_Mult := (others => 0);
+      Aux : Long_Long_Integer;
+   begin
+      for J in Extended_Index_Type range 0 .. 9 loop
+         for K in Extended_Index_Type range 0 .. 9 loop
 
+            pragma Assert (X (J) in - (2**27 - 1) .. 2**27 - 1
+                           and then Y (K) in - (2**27 - 1) .. 2**27 - 1);
+            Aux := (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K);
+            pragma Assert (Aux in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
+            Product (J + K) := Product (J + K) + Aux;
+
+            pragma Loop_Invariant (for all L in J .. J + K =>
+                                     Product (L) in
+                                     (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
+                                   ..
+                                     2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
+            pragma Loop_Invariant (for all L in 0 .. J - 1 =>
+                                     Product (L) = Product'Loop_Entry (L));
+            pragma Loop_Invariant (for all L in J + K + 1 .. 18 =>
+                                     Product (L) = Product'Loop_Entry (L));
+         end loop;
+         pragma Loop_Invariant (for all L in Extended_Index_Type range 0 .. 18 =>
+                                  Product (L) in
+                                  (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
+                                ..
+                                  2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
+      end loop;
       return Product;
-   end Multiply;
+   end Multiply_3;
 end Curve25519;
