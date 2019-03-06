@@ -26,13 +26,12 @@
 --  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 with Partial_Product_Impl_2;
-with Partial_Product_Impl_3;
 
 package body Curve25519 with
   SPARK_Mode
 is
    package PR2 renames Partial_Product_Impl_2;
-   package PR3 renames Partial_Product_Impl_3;
+
    function Add (X, Y : Ints_256) return Ints_256 is
       Sum : Ints_256 := (others => 0);
       procedure Prove_Add with
@@ -195,6 +194,16 @@ is
       Product : Ints_Mult := (others => 0);
       Aux : Long_Long_Integer;
       K_First, K_Last : Extended_Index_Type;
+      procedure Prove_Multiply with
+        Ghost,
+        Pre   =>
+          (for all J in X'Range =>
+             X (J) in Min_Multiply .. Max_Multiply
+           and then Y (J) in Min_Multiply .. Max_Multiply)
+           and then (for all J in Product'Range =>
+                       Product (J) = PR2.Partial_Product (X, Y, J)),
+        Post  => To_Integer_Mult (Product) = To_Integer_256 (X) * To_Integer_256 (Y);
+      procedure Prove_Multiply is null;
    begin
       for J in Extended_Index_Type range 0 .. 18 loop
          K_First := Extended_Index_Type'Max (J - 9, 0);
@@ -241,104 +250,4 @@ is
       end loop;
       return Product;
    end Multiply_2;
-
---  Implementation 3
-
-   function Multiply_3 (X, Y : Ints_256) return Ints_Mult is
-      Product : Ints_Mult := (others => 0);
-      Aux : Long_Long_Integer;
-      Save : Long_Long_Integer with Ghost;
-      procedure Prove_Overflow (J, K : Index_Type) with
-        Ghost,
-        Pre =>
-          (for all J in X'Range =>
-             X (J) in Min_Multiply .. Max_Multiply
-           and then Y (J) in Min_Multiply .. Max_Multiply)
-          and then Aux = (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K)
-          and then (if K = Index_Type'Min (9, J + K)
-                        then Save = 0
-                        else Save = PR3.Partial_Product (X, Y, J - 1, K + 1))
-          and then Product (J + K) = Save + Aux,
-        Post => (if K = Index_Type'Min (9, J + K)
-                     then Product (J + K) = (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K)
-                     else Product (J + K) = PR3.Partial_Product (X, Y, J - 1, K + 1) + (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K));
-      procedure Prove_Overflow (J, K : Index_Type) is null;
-   begin
-
-      for J in Extended_Index_Type range 0 .. 9 loop
-         for K in Extended_Index_Type range 0 .. 9 loop
-
-            Save := Product (J + K);
-            pragma Assert (X (J) in Min_Multiply .. Max_Multiply
-                             and then Y (K) in Min_Multiply .. Max_Multiply);
-            pragma Assert (X (J) * Y (K) in - (2**27 - 1)**2 .. (2**27 - 1)**2);
-            Aux := X (J) * Y (K) * (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1);
-            pragma Assert (Aux = X (J) * Y (K) * (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1));
-            pragma Assert (Aux in (-2) * (2**27 - 1)**2 .. 2 * (2**27 - 1)**2);
-            Product (J + K) := Product (J + K) + Aux;
-
-            pragma Assert (PR3.Partial_Product_Rec (X, Y, J, K) = (if K = Index_Type'Min (9, J + K)
-                           then (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K)
-                           else PR3.Partial_Product_Rec (X, Y, J - 1, K + 1) + (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K)));
-
-            Prove_Overflow (J, K);
-
-            pragma Assert (Product (J + K) = PR3.Partial_Product (X, Y, J, K));
-
-            pragma Assert (Product (J + K) in
-                             (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
-                           ..
-                             2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
-
-            pragma Loop_Invariant ((for all L in 0 .. J - 1 =>
-                                      Product (L) = Product'Loop_Entry (L))
-                                   and then
-                                     (for all L in J + K + 1 .. 18 =>
-                                        Product (L) = Product'Loop_Entry (L)));
-
-            pragma Loop_Invariant (for all L in J .. J + K =>
-                                     Product (L) in
-                                     (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
-                                   ..
-                                     2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
-
-            pragma Loop_Invariant (for all L in J .. J + K =>
-                                     Product (L) = PR3.Partial_Product (X, Y, J, L - J));
-
-            pragma Loop_Invariant (if J = 9
-                                   then (for all L in 10 .. J + K =>
-                                           Product (L) = PR3.Partial_Product (X, Y, 9, L - 9)));
-         end loop;
-
-         pragma Loop_Invariant (for all L in J + 10 .. 18 =>
-                                  Product (L) = Product'Loop_Entry (L));
-
-         pragma Loop_Invariant (for all L in Extended_Index_Type range 0 .. 18 =>
-                                  Product (L) in
-                                  (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
-                                ..
-                                  2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
-
-         pragma Loop_Invariant (for all K in 0 .. J =>
-                                  Product (K) = PR3.Partial_Product (X, Y, K));
-
-         pragma Loop_Invariant (if J = 9
-                                then (for all L in Extended_Index_Type range 10 .. 18 =>
-                                        Product (L) = PR3.Partial_Product (X, Y, 9, L - 9)));
-
-         pragma Loop_Invariant (for all K in J + 1 .. J + 9 =>
-                                  Product (K) = PR3.Partial_Product (X, Y, J, K - J));
-
-      end loop;
-
-      for L in Index_Type_Mult range 10 .. 18 loop
-         pragma Assert (Product (L) = PR3.Partial_Product (X, Y, Index_Type'Min (L, 9), Index_Type'Max (0, L - 9)));
-
-         pragma Loop_Invariant (for all M in 10 .. L => Product (M) = PR3.Partial_Product (X, Y, M));
-      end loop;
-
-      pragma Assert (for all J in Index_Type_Mult range 0 .. 18 => Product (J) = PR3.Partial_Product (X, Y, J));
-
-      return Product;
-   end Multiply_3;
 end Curve25519;

@@ -29,4 +29,5 @@ is
 
    function To_Integer_Mult (X : Ints_Mult) return Big_Integer is
      (Partial_Conversion (X, 18));
+
 end Conversion;

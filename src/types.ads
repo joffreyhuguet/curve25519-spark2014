@@ -31,4 +31,19 @@ is
                                             Two_Power (357), Two_Power (383),
                                             Two_Power (408), Two_Power (434),
                                             Two_Power (459)) with Ghost;
+
+   procedure Conversion_Array_Lemma (J, K : Index_Type) with
+     Ghost,
+     Post => (if ((J + K) mod 2 = 0 and then K mod 2 = 1)
+              then Two_Power (1) * Conversion_Array (J + K)
+                 = Conversion_Array (J) * Conversion_Array (K)
+              else Conversion_Array (J + K)
+                 = Conversion_Array (J) * Conversion_Array (K));
+   procedure Conversion_Array_Lemma (J, K : Index_Type) is null;
+
+   function All_In_Range (X, Y : Ints_256; Min, Max : Long_Long_Integer) return Boolean is
+     (for all J in X'Range =>
+         X (J) in Min .. Max
+      and then Y (J) in Min .. Max);
+
 end Types;
