@@ -1,7 +1,7 @@
 (* Module for axiomatizing the record theory associated to type "big_integer" defined at big_integers.ads:7, created in Why.Gen.Records.Create_Rep_Record_Theory_If_Needed *)
 module Big_integers__big_integer__rep
- use import "_gnatprove_standard".Main
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use "int".Int
 
  type __main_type = int
  
@@ -25,9 +25,9 @@ end
 
 (* Module for axiomatizing type "big_integer" defined at big_integers.ads:7, created in Gnat2Why.Types.Translate_Type *)
 module Big_integers__big_integer
- use export Big_integers__big_integer__rep
- use import "_gnatprove_standard".Main
- use import "int".Int
+ use Big_integers__big_integer__rep
+ use "_gnatprove_standard".Main
+ use "int".Int
 
  type big_integer =
   __rep
@@ -65,17 +65,17 @@ module Big_integers__big_integer
  
  meta "model_projection" function big_integer__ref_big_integer__content__projection
  
- meta "inline : no" function big_integer__ref_big_integer__content__projection
+ meta "inline:no" function big_integer__ref_big_integer__content__projection
  
  val big_integer__havoc 
    (x : big_integer__ref) : unit
   writes {x}
 
- predicate dynamic_invariant "inline" 
+ predicate dynamic_invariant [@inline]
    (temp___expr_158 : big_integer) (temp___is_init_154 : bool) (temp___skip_constant_155 : bool) (temp___do_toplevel_156 : bool) (temp___do_typ_inv_157 : bool)  =
   true
  
- predicate default_initial_assumption "inline" 
+ predicate default_initial_assumption [@inline] 
    (temp___expr_159 : big_integer) (temp___skip_top_level_160 : bool)  =
   true
 
@@ -84,23 +84,25 @@ end
 
 (* Module for defining the constant "zero" defined at big_integers.ads:9, created in Gnat2Why.Decls.Translate_Constant *)
 module Big_integers__zero
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
- function zero #"big_integers.ads" 9 0 0#
-   : Big_integers__big_integer.big_integer = 0
+ val constant zero [#"big_integers.ads" 8 0 0]
+   : Big_integers__big_integer.big_integer
+   ensures { result = 0 }
+
  
- function attr__ATTRIBUTE_ADDRESS 
+ val constant attr__ATTRIBUTE_ADDRESS 
    : int
 
 end
 
 (* Module for possibly declaring a logic function for "Oeq" defined at big_integers.ads:11, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Oeq
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
  function oeq__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l = r
@@ -117,9 +119,9 @@ end
 
 (* Module for possibly declaring a logic function for "Olt" defined at big_integers.ads:12, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Olt
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
  function olt__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l < r
@@ -136,9 +138,9 @@ end
 
 (* Module for possibly declaring a logic function for "Ole" defined at big_integers.ads:13, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Ole
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
  function ole__logic
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l <= r
@@ -155,9 +157,9 @@ end
 
 (* Module for possibly declaring a logic function for "Ogt" defined at big_integers.ads:14, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Ogt
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
  function ogt__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l > r
@@ -174,9 +176,9 @@ end
 
 (* Module for possibly declaring a logic function for "Oge" defined at big_integers.ads:15, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Oge
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
  function oge__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : bool = l >= r
@@ -193,8 +195,8 @@ end
 
 (* Module for possibly declaring a logic function for "to_big_integer" defined at big_integers.ads:17, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__to_big_integer
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
 
  function to_big_integer__logic
    (arg : int) : Big_integers__big_integer.big_integer = arg
@@ -210,8 +212,8 @@ module Big_integers__to_big_integer
 end
 
 module Big_integers__to_big_integer__2
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
 
  function to_big_integer__2__logic 
    (arg : int) : Big_integers__big_integer.big_integer = arg
@@ -228,9 +230,9 @@ end
 
 (* Module for possibly declaring a logic function for "in_range" defined at big_integers.ads:25, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__in_range
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
  
  function in_range__logic
    (arg : Big_integers__big_integer.big_integer) (low : Big_integers__big_integer.big_integer) (high : Big_integers__big_integer.big_integer) : bool = low <= arg /\ arg <= high
@@ -249,11 +251,11 @@ end
 
 (* Module for possibly declaring a logic function for "to_integer" defined at big_integers.ads:28, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__to_integer
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import Big_integers__to_big_integer
- use import Big_integers__in_range
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use Big_integers__to_big_integer
+ use Big_integers__in_range
+ use "int".Int
 
  function to_integer__logic 
    (arg : Big_integers__big_integer.big_integer) : int = arg
@@ -270,9 +272,9 @@ end
 
 (* Module for possibly declaring a logic function for "Osubtract" defined at big_integers.ads:39, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Osubtract
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
  function osubtract__logic 
    (l : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = -l
@@ -289,9 +291,9 @@ end
 
 (* Module for possibly declaring a logic function for "Oabs" defined at big_integers.ads:40, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Oabs
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Abs
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Abs
  
  function oabs__logic 
    (l : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = abs l
@@ -308,9 +310,9 @@ end
 
 (* Module for possibly declaring a logic function for "Oadd" defined at big_integers.ads:11, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Oadd__2
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
  function oadd__2__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = l + r
@@ -327,9 +329,9 @@ end
 
 (* Module for possibly declaring a logic function for "Osubtract__2" defined at big_integers.ads:42, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Osubtract__2
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
  function osubtract__2__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = l - r
@@ -346,9 +348,9 @@ end
 
 (* Module for possibly declaring a logic function for "Omultiply" defined at big_integers.ads:43, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Omultiply
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
 
  function omultiply__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = l * r
@@ -365,9 +367,9 @@ end
 
 (* Module for possibly declaring a logic function for "Odivide" defined at big_integers.ads:44, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Odivide
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".EuclideanDivision
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".EuclideanDivision
 
  function odivide__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = div l r
@@ -384,9 +386,9 @@ end
 
 (* Module for possibly declaring a logic function for "Omod" defined at big_integers.ads:45, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Omod
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".EuclideanDivision
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".EuclideanDivision
 
  function omod__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = mod l r
@@ -403,10 +405,10 @@ end
 
 (* Module for possibly declaring a logic function for "Orem" defined at big_integers.ads:46, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Orem
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Int
- use import "int".EuclideanDivision
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Int
+ use "int".EuclideanDivision
 
  function orem__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = l - (div l r) * r
@@ -423,9 +425,9 @@ end
 
 (* Module for possibly declaring a logic function for "Oexpon" defined at big_integers.ads:47, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__Oexpon
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".Power
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".Power
 
  function oexpon__logic 
    (l : Big_integers__big_integer.big_integer) (r : int) : Big_integers__big_integer.big_integer = power l r
@@ -442,9 +444,9 @@ end
 
 (* Module for possibly declaring a logic function for "min" defined at big_integers.ads:49, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__min
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".MinMax
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".MinMax
 
  function min__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = min l r
@@ -461,9 +463,9 @@ end
 
 (* Module for possibly declaring a logic function for "max" defined at big_integers.ads:50, created in Gnat2Why.Subprograms.Translate_Subprogram_Spec *)
 module Big_integers__max
- use import "_gnatprove_standard".Main
- use        Big_integers__big_integer
- use import "int".MinMax
+ use "_gnatprove_standard".Main
+ use Big_integers__big_integer
+ use "int".MinMax
 
  function max__logic 
    (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = max l r

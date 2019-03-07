@@ -8,7 +8,6 @@ is
 
       Product : Ints_Mult := (others => 0);
       Aux : Long_Long_Integer;
-      Save : Long_Long_Integer with Ghost;
 
       --  All content of arrays are in range
 
@@ -117,27 +116,7 @@ is
         Post => (for all J in Index_Type_Mult range 0 .. 18 =>
                    Final_Array'Result (J) = Partial_Product (J));
 
-      -- Proves overflow in the nested loop
 
-      procedure Prove_Overflow (J, K : Index_Type) with
-        Ghost,
-        Pre =>
-          All_In_Range
-          and then Aux = (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1)
-                         * X (J) * Y (K)
-          and then (if K = Index_Type'Min (9, J + K)
-                        then Save = 0
-                        else Save = Partial_Product (J - 1, K + 1))
-          and then Product (J + K) = Save + Aux,
-        Post => (if K = Index_Type'Min (9, J + K)
-                     then Product (J + K)
-                        = (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1)
-                          * X (J) * Y (K)
-                     else Product (J + K)
-                        = Partial_Product (J - 1, K + 1)
-                        + (if (J + K) mod 2 = 0 and then K mod 2 = 1 then 2 else 1)
-                          * X (J) * Y (K));
-      procedure Prove_Overflow (J, K : Index_Type) is null;
 
       --  Proves postcondition after the loop
 
@@ -221,15 +200,18 @@ is
          begin
 
             if L = 0 then
-             return;
+               pragma Assert (Partial_Conversion_Rec (A, L)
+                              = To_Big_Integer (A (0)) * Conversion_Array (0));
+               pragma Assert (Partial_Conversion_Rec (B, L)
+                              = To_Big_Integer (B (0)) * Conversion_Array (0));
+               return;
             end if;
 
             pragma Assert (Partial_Conversion_Rec (A, L)
-                         = (if L = 0
-                           then To_Big_Integer (A(0)) * Conversion_Array (0)
-                           else Partial_Conversion_Rec (A, L - 1)
-                              + To_Big_Integer (A (L)) * Conversion_Array (L)));
+                           = Partial_Conversion_Rec (A, L - 1)
+                           + To_Big_Integer (A (L)) * Conversion_Array (L));
             Equal_Conversion (A, B, L - 1);
+            pragma Assert (Partial_Conversion (A, L) = Partial_Conversion (B, L));
          end Equal_Conversion;
 
          --  This lemma proves a relation between Step_J (J - 1) and Step_J (J)
@@ -434,7 +416,6 @@ is
 
       for J in Extended_Index_Type range 0 .. 9 loop
          for K in Extended_Index_Type range 0 .. 9 loop
-            Save := Product (J + K);
             pragma Assert (X (J) in Min_Multiply .. Max_Multiply
                              and then Y (K) in Min_Multiply .. Max_Multiply);
             pragma Assert (X (J) * Y (K) in - (2**27 - 1)**2 .. (2**27 - 1)**2);
@@ -444,9 +425,16 @@ is
             Product (J + K) := Product (J + K) + Aux;
 
             Partial_Product_Def (J, K);
-            Prove_Overflow (J, K);
 
-            pragma Assert (Product (J + K) = Partial_Product (J, K));
+            if K /= Index_Type'Min (9, J + K) then
+               pragma Assert (Product (J + K) = Partial_Product (J - 1, K + 1) + Aux);
+               pragma Assert (Product (J + K) = Partial_Product (J, K));
+            else
+              pragma Assert (Product (J + K) = Aux);
+              pragma Assert (Product (J + K) = Partial_Product (J, K));
+            end if;
+
+
 
             pragma Assert (Product (J + K) in
                              (-2) * Long_Long_Integer (J + 1) * (2**27 - 1)**2
@@ -469,6 +457,9 @@ is
                                      Product (L) = Partial_Product (J, L - J));
 
          end loop;
+
+         pragma Assert (for all K in 0 .. J - 1 => Product (K) = Step_J (J) (K));
+         pragma Assert (Partial_Product (J, 0) = Partial_Product (J));
 
          pragma Loop_Invariant (for all L in J + 10 .. 18 =>
                                   Product (L) = Product'Loop_Entry (L));
