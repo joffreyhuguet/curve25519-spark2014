@@ -32,8 +32,8 @@ package body Curve25519 with
 is
    package PR2 renames Partial_Product_Impl_2;
 
-   function Add (X, Y : Ints_256) return Ints_256 is
-      Sum : Ints_256 := (others => 0);
+   function Add (X, Y : Integer_256) return Integer_256 is
+      Sum : Integer_256 := (others => 0);
       procedure Prove_Add with
         Ghost,
         Pre  => (for all J in Sum'Range => Sum (J) = X (J) + Y (J)),
@@ -43,16 +43,16 @@ is
       begin
          for J in Sum'Range loop
 
-            X_256 := X_256 + To_Big_Integer (X (J)) * Conversion_Array (J);
-            Y_256 := Y_256 + To_Big_Integer (Y (J)) * Conversion_Array (J);
-            Sum_256 := Sum_256 + To_Big_Integer (Sum (J)) * Conversion_Array (J);
+            X_256 := X_256 + (+X (J)) * Conversion_Array (J);
+            Y_256 := Y_256 + (+Y (J)) * Conversion_Array (J);
+            Sum_256 := Sum_256 + (+Sum (J)) * Conversion_Array (J);
 
-            pragma Assert (To_Big_Integer (X (J)) * Conversion_Array (J) +
-                             To_Big_Integer (Y (J)) * Conversion_Array (J) =
-                           (To_Big_Integer (X (J) + Y (J))) * Conversion_Array (J));
+            pragma Assert ((+X (J)) * Conversion_Array (J) +
+                             (+Y (J)) * Conversion_Array (J) =
+                           (+(X (J) + Y (J))) * Conversion_Array (J));
             pragma Assert (X (J) + Y (J) = Sum (J));
-            pragma Assert ((To_Big_Integer (X (J) + Y (J))) * Conversion_Array (J)
-                           = To_Big_Integer (Sum (J)) * Conversion_Array (J));
+            pragma Assert ((+(X (J) + Y (J))) * Conversion_Array (J)
+                           = (+Sum (J)) * Conversion_Array (J));
 
             pragma Loop_Invariant (X_256 = Partial_Conversion (X, J));
             pragma Loop_Invariant (Y_256 = Partial_Conversion (Y, J));
@@ -79,110 +79,112 @@ is
 
 --  Implementation based on curve25519-donna implementation
 
-   function Multiply_1 (X, Y : Ints_256) return Ints_Mult is
-      Product : Ints_Mult := (others => 0);
+   function Multiply_1 (X, Y : Integer_256) return Product_Integer with
+     SPARK_Mode => Off
+   is
+      Product : Product_Integer := (others => 0);
    begin
 
---              Product (0)  :=      X (0) * Y (0);
---              Product (1)  :=      X (0) * Y (1) +
---                                   X (1) * Y (0);
---              Product (2)  := 2 *  X (1) * Y (1) +
---                                   X (0) * Y (2) +
---                                   X (2) * Y (0);
---              Product (3)  :=      X (1) * Y (2) +
---                                   X (2) * Y (1) +
---                                   X (0) * Y (3) +
---                                   X (3) * Y (0);
---              Product (4)  :=      X (2) * Y (2) +
---                              2 * (X (1) * Y (3) +
---                                   X (3) * Y (1)) +
---                                   X (0) * Y (4) +
---                                   X (4) * Y (0);
---              Product (5)  :=      X (2) * Y (3) +
---                                   X (3) * Y (2) +
---                                   X (1) * Y (4) +
---                                   X (4) * Y (1) +
---                                   X (0) * Y (5) +
---                                   X (5) * Y (0);
---              Product (6)  := 2 * (X (3) * Y (3) +
---                                   X (1) * Y (5) +
---                                   X (5) * Y (1)) +
---                                   X (2) * Y (4) +
---                                   X (4) * Y (2) +
---                                   X (0) * Y (6) +
---                                   X (6) * Y (0);
---              Product (7)  :=      X (3) * Y (4) +
---                                   X (4) * Y (3) +
---                                   X (2) * Y (5) +
---                                   X (5) * Y (2) +
---                                   X (1) * Y (6) +
---                                   X (6) * Y (1) +
---                                   X (0) * Y (7) +
---                                   X (7) * Y (0);
---              Product (8)  :=      X (4) * Y (4) +
---                              2 * (X (3) * Y (5) +
---                                   X (5) * Y (3) +
---                                   X (1) * Y (7) +
---                                   X (7) * Y (1)) +
---                                   X (2) * Y (6) +
---                                   X (6) * Y (2) +
---                                   X (0) * Y (8) +
---                                   X (8) * Y (0);
---              Product (9)  :=      X (4) * Y (5) +
---                                   X (5) * Y (4) +
---                                   X (3) * Y (6) +
---                                   X (6) * Y (3) +
---                                   X (2) * Y (7) +
---                                   X (7) * Y (2) +
---                                   X (1) * Y (8) +
---                                   X (8) * Y (1) +
---                                   X (0) * Y (9) +
---                                   X (9) * Y (0);
---              Product (10) := 2 * (X (5) * Y (5) +
---                                   X (3) * Y (7) +
---                                   X (7) * Y (3) +
---                                   X (1) * Y (9) +
---                                   X (9) * Y (1)) +
---                                   X (4) * Y (6) +
---                                   X (6) * Y (4) +
---                                   X (2) * Y (8) +
---                                   X (8) * Y (2);
---              Product (11) :=      X (5) * Y (6) +
---                                   X (6) * Y (5) +
---                                   X (4) * Y (7) +
---                                   X (7) * Y (4) +
---                                   X (3) * Y (8) +
---                                   X (8) * Y (3) +
---                                   X (2) * Y (9) +
---                                   X (9) * Y (2);
---              Product (12) :=      X (6) * Y (6) +
---                              2 * (X (5) * Y (7) +
---                                   X (7) * Y (5) +
---                                   X (3) * Y (9) +
---                                   X (9) * Y (3)) +
---                                   X (4) * Y (8) +
---                                   X (8) * Y (4);
---              Product (13) :=      X (6) * Y (7) +
---                                   X (7) * Y (6) +
---                                   X (5) * Y (8) +
---                                   X (8) * Y (5) +
---                                   X (4) * Y (9) +
---                                   X (9) * Y (4);
---              Product (14) := 2 * (X (7) * Y (7) +
---                                   X (5) * Y (9) +
---                                   X (9) * Y (5)) +
---                                   X (6) * Y (8) +
---                                   X (8) * Y (6);
---              Product (15) :=      X (7) * Y (8) +
---                                   X (8) * Y (7) +
---                                   X (6) * Y (9) +
---                                   X (9) * Y (6);
---              Product (16) :=      X (8) * Y (8) +
---                              2 * (X (7) * Y (9) +
---                                   X (9) * Y (7));
---              Product (17) :=      X (8) * Y (9) +
---                                   X (9) * Y (8);
---              Product (18) := 2 *  X (9) * Y (9);
+            Product (0)  :=      X (0) * Y (0);
+            Product (1)  :=      X (0) * Y (1) +
+                                 X (1) * Y (0);
+            Product (2)  := 2 *  X (1) * Y (1) +
+                                 X (0) * Y (2) +
+                                 X (2) * Y (0);
+            Product (3)  :=      X (1) * Y (2) +
+                                 X (2) * Y (1) +
+                                 X (0) * Y (3) +
+                                 X (3) * Y (0);
+            Product (4)  :=      X (2) * Y (2) +
+                            2 * (X (1) * Y (3) +
+                                 X (3) * Y (1)) +
+                                 X (0) * Y (4) +
+                                 X (4) * Y (0);
+            Product (5)  :=      X (2) * Y (3) +
+                                 X (3) * Y (2) +
+                                 X (1) * Y (4) +
+                                 X (4) * Y (1) +
+                                 X (0) * Y (5) +
+                                 X (5) * Y (0);
+            Product (6)  := 2 * (X (3) * Y (3) +
+                                 X (1) * Y (5) +
+                                 X (5) * Y (1)) +
+                                 X (2) * Y (4) +
+                                 X (4) * Y (2) +
+                                 X (0) * Y (6) +
+                                 X (6) * Y (0);
+            Product (7)  :=      X (3) * Y (4) +
+                                 X (4) * Y (3) +
+                                 X (2) * Y (5) +
+                                 X (5) * Y (2) +
+                                 X (1) * Y (6) +
+                                 X (6) * Y (1) +
+                                 X (0) * Y (7) +
+                                 X (7) * Y (0);
+            Product (8)  :=      X (4) * Y (4) +
+                            2 * (X (3) * Y (5) +
+                                 X (5) * Y (3) +
+                                 X (1) * Y (7) +
+                                 X (7) * Y (1)) +
+                                 X (2) * Y (6) +
+                                 X (6) * Y (2) +
+                                 X (0) * Y (8) +
+                                 X (8) * Y (0);
+            Product (9)  :=      X (4) * Y (5) +
+                                 X (5) * Y (4) +
+                                 X (3) * Y (6) +
+                                 X (6) * Y (3) +
+                                 X (2) * Y (7) +
+                                 X (7) * Y (2) +
+                                 X (1) * Y (8) +
+                                 X (8) * Y (1) +
+                                 X (0) * Y (9) +
+                                 X (9) * Y (0);
+            Product (10) := 2 * (X (5) * Y (5) +
+                                 X (3) * Y (7) +
+                                 X (7) * Y (3) +
+                                 X (1) * Y (9) +
+                                 X (9) * Y (1)) +
+                                 X (4) * Y (6) +
+                                 X (6) * Y (4) +
+                                 X (2) * Y (8) +
+                                 X (8) * Y (2);
+            Product (11) :=      X (5) * Y (6) +
+                                 X (6) * Y (5) +
+                                 X (4) * Y (7) +
+                                 X (7) * Y (4) +
+                                 X (3) * Y (8) +
+                                 X (8) * Y (3) +
+                                 X (2) * Y (9) +
+                                 X (9) * Y (2);
+            Product (12) :=      X (6) * Y (6) +
+                            2 * (X (5) * Y (7) +
+                                 X (7) * Y (5) +
+                                 X (3) * Y (9) +
+                                 X (9) * Y (3)) +
+                                 X (4) * Y (8) +
+                                 X (8) * Y (4);
+            Product (13) :=      X (6) * Y (7) +
+                                 X (7) * Y (6) +
+                                 X (5) * Y (8) +
+                                 X (8) * Y (5) +
+                                 X (4) * Y (9) +
+                                 X (9) * Y (4);
+            Product (14) := 2 * (X (7) * Y (7) +
+                                 X (5) * Y (9) +
+                                 X (9) * Y (5)) +
+                                 X (6) * Y (8) +
+                                 X (8) * Y (6);
+            Product (15) :=      X (7) * Y (8) +
+                                 X (8) * Y (7) +
+                                 X (6) * Y (9) +
+                                 X (9) * Y (6);
+            Product (16) :=      X (8) * Y (8) +
+                            2 * (X (7) * Y (9) +
+                                 X (9) * Y (7));
+            Product (17) :=      X (8) * Y (9) +
+                                 X (9) * Y (8);
+            Product (18) := 2 *  X (9) * Y (9);
 
       return Product;
 
@@ -190,8 +192,10 @@ is
 
 --  Implementation 2
 
-   function Multiply_2 (X, Y : Ints_256) return Ints_Mult is
-      Product : Ints_Mult := (others => 0);
+   function Multiply_2 (X, Y : Integer_256) return Product_Integer with
+     SPARK_MOde => Off
+   is
+      Product : Product_Integer := (others => 0);
       Aux : Long_Long_Integer;
       K_First, K_Last : Extended_Index_Type;
       procedure Prove_Multiply with

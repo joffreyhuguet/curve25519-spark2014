@@ -6,7 +6,7 @@ package Partial_Product_Impl_2 with
 is
    pragma Annotate (GNATprove, Terminating, Partial_Product_Impl_2);
 
-   function Partial_Product_Rec (X, Y : Ints_256; J : Index_Type_Mult; K : Index_Type) return Long_Long_Integer is
+   function Partial_Product_Rec (X, Y : Integer_256; J : Product_Index_Type; K : Index_Type) return Long_Long_Integer is
      (if K = Extended_Index_Type'Max(J - 9, 0)
       then (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K)
       else Partial_Product_Rec (X, Y, J, K - 1) +
@@ -22,7 +22,7 @@ is
              ..
              2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2;
 
-   function Partial_Product (X, Y : Ints_256; J : Index_Type_Mult; K : Index_Type) return Long_Long_Integer is
+   function Partial_Product (X, Y : Integer_256; J : Product_Index_Type; K : Index_Type) return Long_Long_Integer is
      (Partial_Product_Rec (X, Y, J, K))
    with
      Pre  =>
@@ -35,7 +35,7 @@ is
              ..
              2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2;
 
-   function Partial_Product (X, Y : Ints_256; J : Index_Type_Mult) return Long_Long_Integer is
+   function Partial_Product (X, Y : Integer_256; J : Product_Index_Type) return Long_Long_Integer is
       (Partial_Product_Rec (X, Y, J, Extended_Index_Type'Min (9, J)))
    with
      Pre  =>
