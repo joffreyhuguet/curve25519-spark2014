@@ -4,6 +4,10 @@ package body Curve25519_Mult with
   SPARK_Mode
 is
 
+   --------------
+   -- Multiply --
+   --------------
+
    function Multiply (X, Y : Integer_256) return Product_Integer is
       Product : Product_Integer := (others => 0);
    begin
@@ -40,8 +44,8 @@ is
                                   2 * Long_Long_Integer (J + 1) * (2**27 - 1)**2);
          --  To prove overflow checks
 
-         pragma Loop_Invariant (for all K in 0 .. J + 9 =>
-                                  Product (K) = Array_Step_J (X, Y, J) (K));
+         pragma Loop_Invariant (for all L in 0 .. J + 9 =>
+                                  Product (L) = Array_Step_J (X, Y, J) (L));
          --  Product is partially equal to Array_Step_J (X, Y, J);
 
       end loop;

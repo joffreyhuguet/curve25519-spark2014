@@ -33,5 +33,7 @@ is
    is
      (for all J in X'Range =>
          X (J) in Min .. Max
-         and then Y (J) in Min .. Max);
+         and then Y (J) in Min .. Max)
+   with
+     Ghost;
 end Types;

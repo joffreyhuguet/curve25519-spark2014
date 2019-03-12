@@ -111,7 +111,7 @@ is
    with
      Pre  => All_In_Range (X, Y, Min_Multiply, Max_Multiply),
      Post =>
-       (for all J in Product_Index_Type range 0 .. 18 =>
+       (for all J in Product_Index_Type =>
           Final_Array'Result (J) = Partial_Product (X, Y, J));
    --  Final_Array is equal to the output of Multiply
 
