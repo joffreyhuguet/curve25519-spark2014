@@ -37,7 +37,7 @@ is
       procedure Prove_Add with
         Ghost,
         Pre  => (for all J in Sum'Range => Sum (J) = X (J) + Y (J)),
-        Post => To_Integer_256 (Sum) = To_Integer_256 (X) + To_Integer_256 (Y)
+        Post => To_Big_Integer (Sum) = To_Big_Integer (X) + To_Big_Integer (Y)
       is
         X_256, Y_256, Sum_256 : Big_Integer := Zero;
       begin
@@ -206,7 +206,7 @@ is
            and then Y (J) in Min_Multiply .. Max_Multiply)
            and then (for all J in Product'Range =>
                        Product (J) = PR2.Partial_Product (X, Y, J)),
-        Post  => To_Integer_Mult (Product) = To_Integer_256 (X) * To_Integer_256 (Y);
+        Post  => To_Big_Integer (Product) = To_Big_Integer (X) * To_Big_Integer (Y);
       procedure Prove_Multiply is null;
    begin
       for J in Extended_Index_Type range 0 .. 18 loop

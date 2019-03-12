@@ -12,7 +12,8 @@ is
 
    --  Array types used in implementations
 
-   type Integer_Curve25519 is array (Product_Index_Type range <>) of Long_Long_Integer;
+   type Integer_Curve25519 is array (Product_Index_Type range <>) of Long_Long_Integer
+     with Dynamic_Predicate => Integer_Curve25519'First = 0;
    subtype Product_Integer is Integer_Curve25519 (0 .. 18);
    --  Integer_256 are arrays of 32 bits integers
    subtype Integer_256 is Integer_Curve25519 (0 .. 9) with
