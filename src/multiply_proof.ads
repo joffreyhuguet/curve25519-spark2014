@@ -198,7 +198,7 @@ is
       X, Y                 : Integer_256;
       J, K                 : Index_Type)
    with
-     Pre  =>
+     Pre            =>
        All_In_Range (X, Y, Min_Multiply, Max_Multiply)
        and then J > 0
        and then
@@ -210,13 +210,14 @@ is
          = Previous
            + (+Array_Step_J (X, Y, J) (J + K)) * Conversion_Array (J + K),
      Contract_Cases =>
-         (K < 9 =>
-       Conversion
-       = Partial_Conversion (Array_Step_J (X, Y, J - 1), J + K)
-         + Diff_Step_J (X, Y, J, K),
-          K = 9 =>        Conversion
-       = Partial_Conversion (Array_Step_J (X, Y, J - 1), J + 8)
-         + Diff_Step_J (X, Y, J, 9));
+       (K < 9 =>
+          Conversion
+        = Partial_Conversion (Array_Step_J (X, Y, J - 1), J + K)
+        + Diff_Step_J (X, Y, J, K),
+        K = 9 =>
+          Conversion
+        = Partial_Conversion (Array_Step_J (X, Y, J - 1), J + 8)
+        + Diff_Step_J (X, Y, J, 9));
    --  Array_Diff_Lemma establishes a link between Array_Step_J (X, Y, J - 1)
    --  and Array_Step_J (X, Y, J) via Partial_Conversion and Diff_Step_J.
 
@@ -231,7 +232,7 @@ is
    with
      Pre  =>
        Old_Product
-       = Old_X * To_Big_Integer (Y)
+       = Old_X * (+Y)
          + (+X (J))
            * (if K = 0
               then Zero
@@ -244,7 +245,7 @@ is
            * Conversion_Array (J + K),
      Post =>
        Product_Conversion
-       = Old_X * To_Big_Integer (Y)
+       = Old_X * (+Y)
          + (+X (J)) * Conversion_Array (J)
            * Partial_Conversion (Y, K);
    --  This function splits the conversion of factor J-K into conversion
@@ -257,6 +258,6 @@ is
      Pre  =>
        All_In_Range (X, Y, Min_Multiply, Max_Multiply)
        and then Product = Array_Step_J (X, Y, 9),
-     Post => To_Big_Integer (Product) = To_Big_Integer (X) * To_Big_Integer (Y);
+     Post => (+Product) = (+X) * (+Y);
    --  Proves the property of Multiply for Final_Array
 end Multiply_Proof;

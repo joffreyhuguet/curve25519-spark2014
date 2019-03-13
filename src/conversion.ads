@@ -51,6 +51,9 @@ is
    --  Converts an array of 10 32-bits integers to the signed
    --  256-bits integer it represents.
 
+   function "+" (X : Integer_Curve25519) return Big_Integer
+     renames To_Big_Integer;
+
    procedure Equal_To_Conversion
      (A, B : Integer_Curve25519;
       L    : Product_Index_Type)

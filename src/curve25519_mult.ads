@@ -8,6 +8,6 @@ is
    function Multiply (X, Y : Integer_256) return Product_Integer with
      Pre  => All_In_Range (X, Y, Min_Multiply, Max_Multiply),
      Post =>
-       To_Big_Integer (Multiply'Result)
-     = To_Big_Integer (X) * To_Big_Integer (Y);
+       (+Multiply'Result)
+     = (+X) * (+Y);
 end Curve25519_Mult;

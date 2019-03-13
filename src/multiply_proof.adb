@@ -168,8 +168,8 @@ is
          for K in Index_Type loop
             Old_Product := Product_Conversion;
             pragma Assert (if K = 0 then
-                              Old_Product = Old_X * To_Big_Integer (Y)
-                           else Old_Product = Old_X * To_Big_Integer (Y)
+                              Old_Product = Old_X * (+Y)
+                           else Old_Product = Old_X * (+Y)
                            + (+X (J)) * Conversion_Array (J)
                            * Partial_Conversion (Y, K - 1));
             --  Asserting loop invariants on Old_Product
@@ -192,7 +192,7 @@ is
             --  at the end of the loop.
 
             pragma Loop_Invariant (Product_Conversion
-                                   = Old_X * To_Big_Integer (Y)
+                                   = Old_X * (+Y)
                                    + (+X (J)) * Conversion_Array (J)
                                    * Partial_Conversion (Y, K));
             --  Product_Conversion is equal to the product of the partial
@@ -203,18 +203,18 @@ is
          Array_Step_J_To_Next (Product_Conversion, X, Y, J);
          --  To prove first loop invariant
 
-         pragma Assert (Partial_Conversion (Y, 9) = To_Big_Integer (Y));
+         pragma Assert (Partial_Conversion (Y, 9) = (+Y));
          --  To prove third loop invariant
 
          pragma Loop_Invariant (Product_Conversion
                                 = Partial_Conversion (Array_Step_J (X, Y, J), J + 9));
          --  At the end of this loop, will prove that Product_Conversion is
-         --  equal to To_Big_Integer (Final_Array).
+         --  equal to (+Final_Array).
 
          pragma Loop_Invariant (X_Conversion
                                 = Partial_Conversion (X, J));
          pragma Loop_Invariant (Product_Conversion
-                                = X_Conversion * To_Big_Integer (Y));
+                                = X_Conversion * (+Y));
          --  Distributivity of multiplication over addition.
       end loop;
 
