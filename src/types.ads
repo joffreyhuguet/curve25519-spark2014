@@ -14,9 +14,9 @@ is
 
    type Integer_Curve25519 is array (Product_Index_Type range <>) of Long_Long_Integer
      with Dynamic_Predicate => Integer_Curve25519'First = 0;
-   subtype Product_Integer is Integer_Curve25519 (0 .. 18);
+   subtype Product_Integer is Integer_Curve25519 (Product_Index_Type);
    --  Integer_256 are arrays of 32 bits integers
-   subtype Integer_256 is Integer_Curve25519 (0 .. 9) with
+   subtype Integer_256 is Integer_Curve25519 (Index_Type) with
      Dynamic_Predicate => (for all J of Integer_256 => J in -2**31 .. 2**31 - 1);
    type Conversion_Array_Type is array (Product_Index_Type) of Big_Integer with Ghost;
 

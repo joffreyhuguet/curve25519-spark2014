@@ -8,7 +8,8 @@ package Conversion with
 is
    pragma Annotate (GNATprove, Terminating, Conversion);
 
-   Conversion_Array : constant Conversion_Array_Type := Construct_Conversion_Array.Conversion_Array;
+   Conversion_Array : constant Conversion_Array_Type
+     := Construct_Conversion_Array.Conversion_Array;
    --  Conversion_Array is the array constructed in the
    --  Construct_Conversion_Array package. It has the
    --  property proven in the previous package.
@@ -18,7 +19,7 @@ is
    --                      2**332, 2**357, 2**383, 2**408, 2**434, 2**459)
 
 
-   function Partial_Conversion_Rec
+   function Partial_Conversion
      (X : Integer_Curve25519;
       L : Product_Index_Type)
       return Big_Integer
@@ -26,21 +27,11 @@ is
      (if L = 0
       then (+X(0)) * Conversion_Array (0)
       else
-         Partial_Conversion_Rec (X, L - 1) + (+X (L)) * Conversion_Array (L))
+         Partial_Conversion (X, L - 1) + (+X (L)) * Conversion_Array (L))
    with
      Pre => L in X'Range;
    --  Recursive function to convert the array of integers to the integer
    --  it represents.
-
-   function Partial_Conversion
-     (X : Integer_Curve25519;
-      L : Product_Index_Type)
-      return Big_Integer
-   is
-     (Partial_Conversion_Rec (X, L))
-   with
-     Pre => L in X'Range;
-   --  Wrapper for recursive function Partial_Conversion_Rec
 
    function To_Big_Integer (X : Integer_Curve25519)
      return Big_Integer

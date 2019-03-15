@@ -90,7 +90,8 @@ is
    procedure Array_Step_J_To_Next
      (Product_Conversion : Big_Integer;
       X, Y               : Integer_256;
-      J                  : Index_Type) is
+      J                  : Index_Type)
+   is
       Conversion, Previous : Big_Integer :=
         (if J = 0
          then Zero
@@ -124,6 +125,16 @@ is
                               = Partial_Conversion (Array_Step_J (X, Y, J), J + K));
                --  The assertion is needed, otherwise the solvers cannot
                --  prove first loop invariant in first iteration.
+            else
+               pragma Assert (Diff_Step_J (X, Y, J, K)
+                              = Diff_Step_J (X, Y, J, K - 1)
+                              + (+X (0)) * (+Y (K))
+                              * Conversion_Array (K));
+               --  Definition of Diff_Step_J
+
+               pragma Assert (Conversion
+                              = Diff_Step_J (X, Y, J, K));
+               --  Discharges the provers to prove it afterwards
             end if;
          else
             Array_Diff_Lemma (Previous, Conversion, X, Y, J, K);
@@ -218,6 +229,7 @@ is
          --  Distributivity of multiplication over addition.
       end loop;
 
+      pragma Assert ((+X) = Partial_Conversion (X, 9));
       pragma Assert (Product_Conversion = Partial_Conversion (Array_Step_J (X, Y, 9), 18));
    end Prove_Multiply;
 

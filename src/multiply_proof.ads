@@ -119,14 +119,14 @@ is
    -- Diff_Step_J and other functions --
    -------------------------------------
 
-   function Diff_Step_J_Rec
+   function Diff_Step_J
      (X, Y : Integer_256;
       J, K : Index_Type)
       return Big_Integer
    is
      (if K = 0
       then (+X (J) * Y (K)) * Conversion_Array (J + K)
-      else Diff_Step_J_Rec (X, Y, J, K - 1)
+      else Diff_Step_J (X, Y, J, K - 1)
            + (+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
              * (+X (J) * Y (K))
              * Conversion_Array (J + K));
@@ -134,14 +134,6 @@ is
    --  Partial_Conversion (Array_Step_J (X, Y, J), J + K)
    --  - Partial_Conversion (Array_Step_J (X, Y, J - 1), J + K),
    --  i.e it is equal to the big integer added to Product in loop J
-
-   function Diff_Step_J
-     (X, Y : Integer_256;
-      J, K : Index_Type)
-      return Big_Integer
-   is
-     (Diff_Step_J_Rec (X, Y, J, K));
-   -- Wrapper for recursive function Diff_Step_J_Rec
 
    procedure Diff_Step_J_Def (X, Y : Integer_256; J, K : Index_Type) with
      Post =>
