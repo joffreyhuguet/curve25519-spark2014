@@ -7,7 +7,5 @@ package Curve25519_Mult with
 is
    function Multiply (X, Y : Integer_256) return Product_Integer with
      Pre  => All_In_Range (X, Y, Min_Multiply, Max_Multiply),
-     Post =>
-       (+Multiply'Result)
-     = (+X) * (+Y);
+     Post => (+Multiply'Result) = (+X) * (+Y);
 end Curve25519_Mult;

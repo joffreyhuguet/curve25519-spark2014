@@ -1,4 +1,5 @@
 package Big_Integers with
+  Ghost,
   SPARK_Mode
 is
    pragma Annotate (GNATprove, External_Axiomatization);

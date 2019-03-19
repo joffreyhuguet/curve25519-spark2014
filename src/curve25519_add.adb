@@ -43,13 +43,6 @@ is
             Y_256 := Y_256 + (+Y (J)) * Conversion_Array (J);
             Sum_256 := Sum_256 + (+Sum (J)) * Conversion_Array (J);
 
-            pragma Assert ((+X (J)) * Conversion_Array (J) +
-                             (+Y (J)) * Conversion_Array (J) =
-                           (+(X (J) + Y (J))) * Conversion_Array (J));
-            pragma Assert (X (J) + Y (J) = Sum (J));
-            pragma Assert ((+(X (J) + Y (J))) * Conversion_Array (J)
-                           = (+Sum (J)) * Conversion_Array (J));
-
             pragma Loop_Invariant (X_256 = Partial_Conversion (X, J));
             pragma Loop_Invariant (Y_256 = Partial_Conversion (Y, J));
             pragma Loop_Invariant (Sum_256 = Partial_Conversion (Sum, J));
