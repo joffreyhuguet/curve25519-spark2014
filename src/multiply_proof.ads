@@ -104,16 +104,7 @@ is
                    Array_Step_J'Result (K) = Partial_Product (X, Y, K))
        and then (for all K in J + 1 .. J + 9 =>
                    Array_Step_J'Result (K) = Partial_Product (X, Y, J, K - J));
-   --  Array_Step_J is equal to Product at the end of loop J
-
-   function Final_Array (X, Y : Integer_256) return Product_Integer is
-     (Array_Step_J (X, Y, 9))
-   with
-     Pre  => All_In_Range (X, Y, Min_Multiply, Max_Multiply),
-     Post =>
-       (for all J in Product_Index_Type =>
-          Final_Array'Result (J) = Partial_Product (X, Y, J));
-   --  Final_Array is equal to the output of Multiply
+   --  Array_Step_J is equal to Product at the end of loo
 
    -------------------------------------
    -- Diff_Step_J and other functions --
@@ -155,17 +146,9 @@ is
       return    Big_Integer
    is
      (Product + (+X (J))
-     * (+Y (K))
-     * (+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
-     * Conversion_Array (J + K))
-   with
-     Pre  => All_In_Range (X, Y, Min_Multiply, Max_Multiply),
-     Post =>
-       Add_Factor'Result
-       = Product + (+X (J))
-         * (+Y (K))
-         * (+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
-         * Conversion_Array (J + K);
+              * (+Y (K))
+              * (+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
+              * Conversion_Array (J + K));
    --  Add_Factor adds the J-K factor to a big integer
 
    procedure Array_Step_J_To_Next

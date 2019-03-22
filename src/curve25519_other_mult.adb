@@ -160,10 +160,10 @@ is
                                      (-2) * Long_Long_Integer (K + 1) * (2**27 - 1)**2
                                    ..
                                      2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2);
-            pragma Loop_Invariant (Product (J) = Partial_Product (X, Y, J, K));
+          pragma Loop_Invariant (Product (J) = Partial_Product (X, Y, J, K));
          end loop;
-         pragma Loop_Invariant (for all K in 0 .. J =>
-                                  Product (K) = Partial_Product (X, Y, K));
+       pragma Loop_Invariant (for all K in 0 .. J =>
+                                Product (K) = Partial_Product (X, Y, K));
       end loop;
       return Product;
    end Multiply_2;

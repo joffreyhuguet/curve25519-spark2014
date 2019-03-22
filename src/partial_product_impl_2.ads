@@ -4,8 +4,6 @@ package Partial_Product_Impl_2 with
   SPARK_Mode,
   Ghost
 is
-   pragma Annotate (GNATprove, Terminating, Partial_Product_Impl_2);
-
    function Partial_Product_Rec
      (X, Y : Integer_256;
       J    : Product_Index_Type;
@@ -26,6 +24,7 @@ is
              (-2) * Long_Long_Integer (K + 1) * (2**27 - 1)**2
              ..
              2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2;
+   pragma Annotate (GNATprove, Terminating, Partial_Product_Rec);
 
    function Partial_Product
      (X, Y : Integer_256;

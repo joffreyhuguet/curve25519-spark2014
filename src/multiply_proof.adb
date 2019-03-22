@@ -168,7 +168,7 @@ is
 
    procedure Prove_Multiply (X, Y : Integer_256; Product : Product_Integer) is
       X_Conversion, Product_Conversion  : Big_Integer := Zero;
-      Old_X, Old_Product : Big_Integer;
+      Old_X, Old_Product                : Big_Integer;
    begin
       for J in Index_Type loop
          Old_X := X_Conversion;
@@ -214,6 +214,10 @@ is
          Array_Step_J_To_Next (Product_Conversion, X, Y, J);
          --  To prove first loop invariant
 
+         pragma Assert (Product_Conversion
+                        = Old_X * (+Y)
+                        + (+X (J)) * Conversion_Array (J)
+                        * Partial_Conversion (Y, 9));
          pragma Assert (Partial_Conversion (Y, 9) = (+Y));
          --  To prove third loop invariant
 
@@ -224,6 +228,7 @@ is
 
          pragma Loop_Invariant (X_Conversion
                                 = Partial_Conversion (X, J));
+
          pragma Loop_Invariant (Product_Conversion
                                 = X_Conversion * (+Y));
          --  Distributivity of multiplication over addition.
