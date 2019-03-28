@@ -389,9 +389,10 @@ module Big_integers__Omod
  use "_gnatprove_standard".Main
  use Big_integers__big_integer
  use "int".EuclideanDivision
-
+ use "int".Int
+ 
  function omod__logic 
-   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = mod l r
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = if r > 0 then mod l r else mod l r + r
  
  predicate omod__function_guard 
    (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer)
@@ -411,7 +412,7 @@ module Big_integers__Orem
  use "int".EuclideanDivision
 
  function orem__logic 
-   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = l - (div l r) * r
+   (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) : Big_integers__big_integer.big_integer = mod l r
  
  predicate orem__function_guard 
    (result : Big_integers__big_integer.big_integer) (l : Big_integers__big_integer.big_integer) (r : Big_integers__big_integer.big_integer) 
