@@ -8,7 +8,7 @@ is
    -- Multiply --
    --------------
 
-   function Multiply (X, Y : Integer_256) return Product_Integer is
+   function Multiply (X, Y : Integer_255) return Product_Integer is
       Product : Product_Integer := (others => 0);
    begin
       for J in Index_Type loop

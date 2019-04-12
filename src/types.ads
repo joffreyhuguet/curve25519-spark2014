@@ -15,9 +15,9 @@ is
    type Integer_Curve25519 is array (Product_Index_Type range <>) of Long_Long_Integer
      with Dynamic_Predicate => Integer_Curve25519'First = 0;
    subtype Product_Integer is Integer_Curve25519 (Product_Index_Type);
-   --  Integer_256 are arrays of 32 bits integers
-   subtype Integer_256 is Integer_Curve25519 (Index_Type) with
-     Dynamic_Predicate => (for all J of Integer_256 => J in -2**31 .. 2**31 - 1);
+   --  Integer_255 are arrays of 32 bits integers
+   subtype Integer_255 is Integer_Curve25519 (Index_Type) with
+     Dynamic_Predicate => (for all J of Integer_255 => J in -2**31 .. 2**31 - 1);
    type Conversion_Array_Type is array (Product_Index_Type) of Big_Integer with Ghost;
 
    --  Constants and predicates used in implementations
@@ -27,7 +27,7 @@ is
    Min_Multiply : constant Long_Long_Integer := - (2**27 - 1) with Ghost;
    Max_Multiply : constant Long_Long_Integer := 2**27 - 1 with Ghost;
    function All_In_Range
-     (X, Y     : Integer_256;
+     (X, Y     : Integer_255;
       Min, Max : Long_Long_Integer)
       return     Boolean
    is

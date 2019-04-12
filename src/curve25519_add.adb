@@ -28,24 +28,24 @@
 package body Curve25519_Add with
   SPARK_Mode
 is
-   function Add (X, Y : Integer_256) return Integer_256 is
-      Sum : Integer_256 := (others => 0);
+   function Add (X, Y : Integer_255) return Integer_255 is
+      Sum : Integer_255 := (others => 0);
       procedure Prove_Add with
         Ghost,
         Pre  => (for all J in Sum'Range => Sum (J) = X (J) + Y (J)),
         Post => To_Big_Integer (Sum) = To_Big_Integer (X) + To_Big_Integer (Y)
       is
-        X_256, Y_256, Sum_256 : Big_Integer := Zero;
+        X_255, Y_255, Sum_255 : Big_Integer := Zero;
       begin
          for J in Sum'Range loop
 
-            X_256 := X_256 + (+X (J)) * Conversion_Array (J);
-            Y_256 := Y_256 + (+Y (J)) * Conversion_Array (J);
-            Sum_256 := Sum_256 + (+Sum (J)) * Conversion_Array (J);
+            X_255 := X_255 + (+X (J)) * Conversion_Array (J);
+            Y_255 := Y_255 + (+Y (J)) * Conversion_Array (J);
+            Sum_255 := Sum_255 + (+Sum (J)) * Conversion_Array (J);
 
-            pragma Loop_Invariant (X_256 = Partial_Conversion (X, J));
-            pragma Loop_Invariant (Y_256 = Partial_Conversion (Y, J));
-            pragma Loop_Invariant (Sum_256 = Partial_Conversion (Sum, J));
+            pragma Loop_Invariant (X_255 = Partial_Conversion (X, J));
+            pragma Loop_Invariant (Y_255 = Partial_Conversion (Y, J));
+            pragma Loop_Invariant (Sum_255 = Partial_Conversion (Sum, J));
             pragma Loop_Invariant (Partial_Conversion (Sum, J) =
                                      Partial_Conversion (X, J) +
                                      Partial_Conversion (Y, J));

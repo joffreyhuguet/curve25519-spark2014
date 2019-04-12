@@ -6,7 +6,7 @@ is
 
    --  Implementation based on curve25519-donna implementation
 
-   function Multiply_1 (X, Y : Integer_256) return Product_Integer is
+   function Multiply_1 (X, Y : Integer_255) return Product_Integer is
       Product : Product_Integer := (others => 0);
    begin
 
@@ -117,7 +117,7 @@ is
 
 --  Implementation 2
 
-   function Multiply_2 (X, Y : Integer_256) return Product_Integer is
+   function Multiply_2 (X, Y : Integer_255) return Product_Integer is
       Product         : Product_Integer := (others => 0);
       Aux             : Long_Long_Integer;
       K_First, K_Last : Extended_Index_Type;

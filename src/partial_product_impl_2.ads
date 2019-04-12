@@ -5,7 +5,7 @@ package Partial_Product_Impl_2 with
   Ghost
 is
    function Partial_Product_Rec
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J    : Product_Index_Type;
       K    : Index_Type)
       return Long_Long_Integer
@@ -27,7 +27,7 @@ is
    pragma Annotate (GNATprove, Terminating, Partial_Product_Rec);
 
    function Partial_Product
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J    : Product_Index_Type;
       K    : Index_Type)
       return Long_Long_Integer
@@ -43,7 +43,7 @@ is
              2 * Long_Long_Integer (K + 1) * (2**27 - 1)**2;
 
    procedure Partial_Product_Def
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J    : Product_Index_Type;
       K    : Index_Type)
    with
@@ -59,13 +59,13 @@ is
               = Partial_Product_Rec (X, Y, J, K - 1)
               + (if J mod 2 = 0 and then K mod 2 = 1 then 2 else 1) * X (K) * Y (J - K));
    procedure Partial_Product_Def
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J    : Product_Index_Type;
       K    : Index_Type)
    is null;
 
    function Partial_Product
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J    : Product_Index_Type)
       return Long_Long_Integer
    is

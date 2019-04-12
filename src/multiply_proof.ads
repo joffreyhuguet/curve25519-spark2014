@@ -16,11 +16,11 @@ is
    --  within the loop.
 
    function Partial_Product_Rec
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J, K : Index_Type)
       return Long_Long_Integer
    is
-     (if K = Index_Type'Min (9, J + K)
+     (if K = 9 or else J = 0
       then (if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K)
       else Partial_Product_Rec (X, Y, J - 1, K + 1)
            + (if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K))
@@ -36,7 +36,7 @@ is
    --  invariant.
 
    function Partial_Product
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J, K : Index_Type)
       return Long_Long_Integer
    is
@@ -51,11 +51,11 @@ is
    --  Wrapper for recursive function Partial_Product_Rec
 
    function Partial_Product
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       L    : Product_Index_Type)
       return Long_Long_Integer
    is
-     (Partial_Product_Rec
+     (Partial_Product
        (X, Y, Index_Type'Min (L, 9), Index_Type'Max (0, L - 9)))
      with
      Pre => All_In_Range (X, Y, Min_Multiply, Max_Multiply),
@@ -67,12 +67,12 @@ is
    --  Value of Product (L) at the end of the two loops
 
    procedure Partial_Product_Def
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J, K : Index_Type)
    with
      Pre  => All_In_Range (X, Y, Min_Multiply, Max_Multiply),
      Post =>
-       (if K = Index_Type'Min (9, J + K)
+       (if K = 9 or else J = 0
         then Partial_Product (X, Y, J, K)
              = (if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1)
                * X (J) * Y (K)
@@ -81,7 +81,7 @@ is
                + X (J) * Y (K)
                  * (if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1));
    procedure Partial_Product_Def
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J, K : Index_Type)
    is null;
    --  This procedure is sometimes needed to remind the expression of
@@ -92,7 +92,7 @@ is
    -----------------------------------------------
 
    function Array_Step_J
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J    : Index_Type)
       return Integer_Curve25519
    with
@@ -111,7 +111,7 @@ is
    -------------------------------------
 
    function Diff_Step_J
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J, K : Index_Type)
       return Big_Integer
    is
@@ -126,7 +126,7 @@ is
    --  - Partial_Conversion (Array_Step_J (X, Y, J - 1), J + K),
    --  i.e it is equal to the big integer added to Product in loop J
 
-   procedure Diff_Step_J_Def (X, Y : Integer_256; J, K : Index_Type) with
+   procedure Diff_Step_J_Def (X, Y : Integer_255; J, K : Index_Type) with
      Post =>
        Diff_Step_J (X, Y, J, K)
        = (if K = 0
@@ -135,13 +135,13 @@ is
                + (+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
                  * (+X (J) * Y (K))
                  * Conversion_Array (J + K));
-   procedure Diff_Step_J_Def (X, Y : Integer_256; J, K : Index_Type) is null;
+   procedure Diff_Step_J_Def (X, Y : Integer_255; J, K : Index_Type) is null;
    --  This procedure is sometimes needed to remind the expression of
    --  Diff_Step_J to solvers.
 
    function Add_Factor
      (Product : Big_Integer;
-      X, Y    : Integer_256;
+      X, Y    : Integer_255;
       J, K    : Index_Type)
       return    Big_Integer
    is
@@ -153,7 +153,7 @@ is
 
    procedure Array_Step_J_To_Next
      (Product_Conversion : Big_Integer;
-      X, Y               : Integer_256;
+      X, Y               : Integer_255;
       J                  : Index_Type)
    with
      Pre =>
@@ -170,7 +170,7 @@ is
 
    procedure Array_Diff_Lemma
      (Previous, Conversion : Big_Integer;
-      X, Y                 : Integer_256;
+      X, Y                 : Integer_255;
       J, K                 : Index_Type)
    with
      Pre            =>
@@ -202,7 +202,7 @@ is
 
    procedure Split_Product
      (Old_Product, Old_X, Product_Conversion : Big_Integer;
-      X, Y                                   : Integer_256;
+      X, Y                                   : Integer_255;
       J, K                                   : Index_Type)
    with
      Pre  =>
@@ -227,7 +227,7 @@ is
    --  of factor J and K in X and Y respectively.
 
    procedure Prove_Multiply
-     (X, Y    : Integer_256;
+     (X, Y    : Integer_255;
       Product : Product_Integer)
    with
      Pre  =>

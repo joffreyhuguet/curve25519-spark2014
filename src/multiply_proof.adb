@@ -8,7 +8,7 @@ is
 
    procedure Array_Diff_Lemma
      (Previous, Conversion : Big_Integer;
-      X, Y                 : Integer_256;
+      X, Y                 : Integer_255;
       J, K                 : Index_Type)
    is
    begin
@@ -64,7 +64,7 @@ is
    --  Construction of the array is very simple, it matches the postcondition
 
    function Array_Step_J
-     (X, Y : Integer_256;
+     (X, Y : Integer_255;
       J    : Index_Type)
       return Integer_Curve25519
    is
@@ -89,7 +89,7 @@ is
 
    procedure Array_Step_J_To_Next
      (Product_Conversion : Big_Integer;
-      X, Y               : Integer_256;
+      X, Y               : Integer_255;
       J                  : Index_Type)
    is
       Conversion, Previous : Big_Integer :=
@@ -166,7 +166,7 @@ is
    -- Prove_Multiply --
    --------------------
 
-   procedure Prove_Multiply (X, Y : Integer_256; Product : Product_Integer) is
+   procedure Prove_Multiply (X, Y : Integer_255; Product : Product_Integer) is
       X_Conversion, Product_Conversion  : Big_Integer := Zero;
       Old_X, Old_Product                : Big_Integer;
    begin
@@ -244,7 +244,7 @@ is
 
    procedure Split_Product
      (Old_Product, Old_X, Product_Conversion : Big_Integer;
-      X, Y                                   : Integer_256;
+      X, Y                                   : Integer_255;
       J, K                                   : Index_Type)
    is
    begin
