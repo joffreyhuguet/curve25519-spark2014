@@ -13,9 +13,8 @@ is
    is
    begin
       Partial_Product_Def (X, Y, J, K);
-      Diff_Step_J_Def (X, Y, J, K);
-
       if K = 9 then
+         Diff_Step_J_Def (X, Y, J, K);
          pragma Assert (Partial_Product (X, Y, J, 9)
                         = (if J mod 2 = 1 then 2 else 1) * X (J) * Y (9));
          --  Stop case of Partial_Product (K = 9)
@@ -36,24 +35,37 @@ is
                         + Diff_Step_J (X, Y, J, 9));
          -- Proved thanks to the two assertions above
       else
+         Diff_Step_J_Def (X, Y, J, K);
+
+         pragma Assert (X (J) in Min_Multiply .. Max_Multiply
+                          and then
+                        Y (K) in Min_Multiply .. Max_Multiply);
+         pragma Assert (Array_Step_J (X, Y, J - 1) (J + K) in
+                          (-2) * Long_Long_Integer (J) * (2**27 - 1)**2
+                        ..
+                          2 * Long_Long_Integer (J) * (2**27 - 1)**2);
+         --  Two assertions necessary to prove overflow checks in the
+         --  next assertion.
+
          pragma Assert (Array_Step_J (X, Y, J) (J + K)
                         = Array_Step_J (X, Y, J - 1) (J + K)
-                        + (if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1) * X (J) * Y (K));
+                        + (if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1)
+                        * X (J) * Y (K));
          --  Definition of Partial_Product
+
+         pragma Assert ((+Array_Step_J (X, Y, J) (J + K)) * Conversion_Array (J + K)
+                        = (+Array_Step_J (X, Y, J - 1) (J + K)
+                        + (+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
+                        * (+X (J)) * (+Y (K)))
+                        * Conversion_Array (J + K));
 
          pragma Assert (Diff_Step_J (X, Y, J, K)
                         = (if K = 0 then Zero else Diff_Step_J (X, Y, J, K - 1))
                         + (+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
-                        * (+X (J) * Y (K))
+                        * (+X (J)) * (+Y (K))
                         * Conversion_Array (J + K));
          --  Definition of Diff_Step_J
 
-         pragma Assert ((+Array_Step_J (X, Y, J) (J + K)) * Conversion_Array (J + K)
-                        = (+Array_Step_J (X, Y, J - 1) (J + K)) * Conversion_Array (J + K)
-                        + (+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
-                        * (+X (J) * Y (K))
-                        * Conversion_Array (J + K));
-         --  Proved thanks to the two assertions above
       end if;
    end Array_Diff_Lemma;
 
@@ -169,6 +181,7 @@ is
    procedure Prove_Multiply (X, Y : Integer_255; Product : Product_Integer) is
       X_Conversion, Product_Conversion  : Big_Integer := Zero;
       Old_X, Old_Product                : Big_Integer;
+
    begin
       for J in Index_Type loop
          Old_X := X_Conversion;
@@ -178,22 +191,20 @@ is
 
          for K in Index_Type loop
             Old_Product := Product_Conversion;
-            pragma Assert (if K = 0 then
-                              Old_Product = Old_X * (+Y)
-                           else Old_Product = Old_X * (+Y)
-                           + (+X (J)) * Conversion_Array (J)
-                           * Partial_Conversion (Y, K - 1));
+            pragma Assert (Old_Product = Old_X * (+Y)
+                           + (if K = 0 then Zero else (+X (J)) * Conversion_Array (J)
+                           * Partial_Conversion (Y, K - 1)));
             --  Asserting loop invariants on Old_Product
 
             Product_Conversion := Add_Factor (Product_Conversion, X, Y, J, K);
             --  Using the function is necessary to provr precondition
             --  of Split_Product.
 
-            Diff_Step_J_Def (X, Y, J, K);
-            --  To prove first loop invariant
-
             Split_Product (Old_Product, Old_X, Product_Conversion, X, Y, J, K);
             --  To prove second loop invariant
+
+            Diff_Step_J_Def (X, Y, J, K);
+            --  To prove first loop invariant
 
             pragma Loop_Invariant (Product_Conversion
                                    = Product_Conversion'Loop_Entry
@@ -219,6 +230,9 @@ is
                         + (+X (J)) * Conversion_Array (J)
                         * Partial_Conversion (Y, 9));
          pragma Assert (Partial_Conversion (Y, 9) = (+Y));
+         pragma Assert (Product_Conversion
+                        = Old_X * (+Y)
+                        + (+X (J)) * Conversion_Array (J) * (+Y));
          --  To prove third loop invariant
 
          pragma Loop_Invariant (Product_Conversion
@@ -235,7 +249,7 @@ is
       end loop;
 
       pragma Assert ((+X) = Partial_Conversion (X, 9));
-      pragma Assert (Product_Conversion = Partial_Conversion (Array_Step_J (X, Y, 9), 18));
+      Equal_To_Conversion (Array_Step_J (X, Y, 9), Product, 18);
    end Prove_Multiply;
 
    -------------------
@@ -263,11 +277,39 @@ is
          --  Other case
       end if;
 
-        if K > 0 then
-           pragma Assert (Partial_Conversion (Y, K)
-                          = Partial_Conversion (Y, K - 1)
-                          + (+Y (K)) * Conversion_Array (K));
+      if K > 0 then
+
+         pragma Assert (Product_Conversion
+                        = Old_X * (+Y)
+                        + (+X (J))
+                          * Conversion_Array (J) * Partial_Conversion (Y, K - 1)
+                        + (+X (J)) * (+Y (K))
+                          * (+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
+                          * Conversion_Array (J + K));
+         --  Preconditions
+
+         pragma Assert ((+(if J mod 2 = 1 and then K mod 2 = 1 then 2 else 1))
+                        * Conversion_Array (J + K)
+                        = Conversion_Array (J) * Conversion_Array (K));
+         --  What was proved previously with case disjunction
+
+         pragma Assert (Partial_Conversion (Y, K)
+                        = Partial_Conversion (Y, K - 1)
+                        + (+Y (K)) * Conversion_Array (K));
          --  Definition of Partial_Conversion, needed for proof
+
+         pragma Assert ((+X (J))
+                          * Conversion_Array (J) * Partial_Conversion (Y, K - 1)
+                        + (+X (J)) * (+Y (K))
+                          * Conversion_Array (J) * Conversion_Array (K)
+                        = (+X (J)) * Conversion_Array (J) * Partial_Conversion (Y, K));
+         --  Rearranging the expression using definition of Partial_Conversion
+
+         pragma Assert (Product_Conversion
+                        = Old_X * (+Y)
+                        + (+X (J)) * Conversion_Array (J)
+                        * Partial_Conversion (Y, K));
+         --  Proving the postcondition
       end if;
    end Split_Product;
 end Multiply_Proof;

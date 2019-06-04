@@ -13,8 +13,8 @@ code in [[https://github.com/agl/curve25519-donna][curve25519-donna]] repository
 
 ** Tools used
 
-[[https://www.spark-2014.org/][SPARK2014]] has been used for this project. You may download and install
-the [[https://www.adacore.com/community][GNAT Community 2018]] version by following the previous link.
+[[https://www.adacore.com/community][GNAT Community 2019]] has been used for this project. You may
+download and install it by following the previous link.
 
 ** Verification
 

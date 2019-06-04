@@ -40,8 +40,13 @@ is
          for J in Sum'Range loop
 
             X_255 := X_255 + (+X (J)) * Conversion_Array (J);
+            pragma Assert (X_255 = Partial_Conversion (X, J));
+
             Y_255 := Y_255 + (+Y (J)) * Conversion_Array (J);
+            pragma Assert (Y_255 = Partial_Conversion (Y, J));
+
             Sum_255 := Sum_255 + (+Sum (J)) * Conversion_Array (J);
+            pragma Assert (Sum_255 = Partial_Conversion (Sum, J));
 
             pragma Loop_Invariant (X_255 = Partial_Conversion (X, J));
             pragma Loop_Invariant (Y_255 = Partial_Conversion (Y, J));

@@ -206,12 +206,11 @@ is
       J, K                                   : Index_Type)
    with
      Pre  =>
-       Old_Product
-       = Old_X * (+Y)
-         + (+X (J))
-           * (if K = 0
-              then Zero
-              else Conversion_Array (J) * Partial_Conversion (Y, K - 1))
+       (if K = 0
+          then Old_Product = Old_X * (+Y)
+          else Old_Product
+               = Old_X * (+Y)
+               + (+X (J)) * Conversion_Array (J) * Partial_Conversion (Y, K - 1))
      and then
        Product_Conversion
        = Old_Product
